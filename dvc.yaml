@@ -45,3 +45,13 @@ stages:
       - ${script}
     outs:
       - ${output}
+
+  copy:
+    desc: Copy the statstics plot over into the teams folder.
+    vars:
+      - input: figures/statistics.png
+      - output: /home/rmnldwg/OneDrive_USZ/Oral\ Cavity\ Paper/figures/statistics.png
+    cmd: >
+      cp ${input} ${output}
+    deps:
+      - ${input}

@@ -65,3 +65,9 @@ stages:
     - path: figures/statistics.png
       md5: 9d45efa9ddc2f58f687e926784d2f5dc
       size: 199414
+  copy:
+    cmd: "cp figures/statistics.png /home/rmnldwg/OneDrive_USZ/Oral\\ Cavity\\ Paper/figures/statistics.png\n"
+    deps:
+    - path: figures/statistics.png
+      md5: 9d45efa9ddc2f58f687e926784d2f5dc
+      size: 199414
