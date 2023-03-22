@@ -21,13 +21,27 @@ stages:
       new 'modalities' from combining existing ones, e.g. using the logical AND or
       estimating the most likely involvement based on the observations only.
     vars:
-    - input: data/joined.csv
-    - output: data/enhanced.csv
+      - input: data/joined.csv
+      - output: data/enhanced.csv
     cmd: >
       lyscripts data enhance ${input} ${output} ${data_cleaning_modalities}
     deps:
-    - ${input}
+      - ${input}
     params:
-    - modalities
+      - modalities
     outs:
-    - ${output}
+      - ${output}
+
+  statistics:
+    desc: Plot some interesting cohort statistics regarding involvement patterns.
+    vars:
+      - input: data/enhanced.csv
+      - script: scripts/statistics.py
+      - output: figures/statistics.png
+    cmd: >
+      .venv/bin/python ${script}
+    deps:
+      - ${input}
+      - ${script}
+    outs:
+      - ${output}

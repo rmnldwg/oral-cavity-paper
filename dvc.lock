@@ -52,3 +52,16 @@ stages:
     - path: data/enhanced.csv
       md5: fb9cc7a2d04c4e1a1319f5c769aa9c15
       size: 454557
+  statistics:
+    cmd: ".venv/bin/python scripts/statistics.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: fb9cc7a2d04c4e1a1319f5c769aa9c15
+      size: 454557
+    - path: scripts/statistics.py
+      md5: fa09be4f08115042da6b82fbad407be2
+      size: 10197
+    outs:
+    - path: figures/statistics.png
+      md5: 9d45efa9ddc2f58f687e926784d2f5dc
+      size: 199414
