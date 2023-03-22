@@ -1,0 +1,12 @@
+stages:
+  join:
+    desc: Concatenate the two datasets into one
+    cmd: >
+      lyscripts data join
+      --inputs data/2022-isb-multisite.csv data/2022-clb-multisite.csv
+      --output data/joined.csv
+    deps:
+      - data/2022-isb-multisite.csv
+      - data/2022-clb-multisite.csv
+    outs:
+      - data/joined.csv
