@@ -2,3 +2,11 @@ outs:
 - md5: 96e24966aef559a8652d5ef77cb67f7c
   size: 118182
   path: 2022-clb-multisite.csv
+md5: 2408dde260c76938dcf3f616dc32f81f
+frozen: true
+deps:
+- path: 2022-clb-multisite/data.csv
+  repo:
+    url: git@github.com:rmnldwg/lydata.private
+    rev: 2022-clb-multisite
+    rev_lock: 99511ddd5782464813b96535b9eaa97191b92bad
