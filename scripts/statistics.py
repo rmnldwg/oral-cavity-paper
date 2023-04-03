@@ -16,15 +16,15 @@ OUTPUT_NAME = Path(__file__).with_suffix(".png").name
 OUTPUT_DIR = Path("./figures")
 MPLSTYLE = Path("./scripts/.mplstyle")
 
-ORAL_CAVITY_ICD_CODES = [
-    "C02", "C02.0", "C02.1", "C02.2", "C02.3", "C02.4", "C02.8", "C02.9",
-    "C03", "C03.0", "C03.1", "C03.9",
-    "C04", "C04.0", "C04.1", "C04.8", "C04.9",
-    "C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",
-    "C06", "C06.0", "C06.1", "C06.2", "C06.8", "C06.9",
-    "C07",
-    "C08", "C08.0", "C08.1", "C08.9",
-]
+ORAL_CAVITY_ICD_CODES = {
+    "tongue": ["C02", "C02.0", "C02.1", "C02.2", "C02.3", "C02.4", "C02.8", "C02.9"],
+    "gum": ["C03", "C03.0", "C03.1", "C03.9"],
+    "floor of mouth": ["C04", "C04.0", "C04.1", "C04.8", "C04.9"],
+    "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9"],
+    "other parts of mouth": ["C06", "C06.0", "C06.1", "C06.2", "C06.8", "C06.9"],
+    "parotid gland": ["C07"],
+    "other salivary glands": ["C08", "C08.0", "C08.1", "C08.9"],
+}
 
 # barplot settings
 WIDTH, SPACE = 0.8, 0.4
@@ -44,6 +44,7 @@ COLORS = {
     "gray": '#c5d5db',
 }
 COLOR_CYCLE = cycler(color=[COLORS["red"], COLORS["green"]])
+SUBSITE_COLOR_LIST = [COLORS["green"], COLORS["red"], COLORS["orange"]]
 
 
 if __name__ == "__main__":
@@ -52,7 +53,9 @@ if __name__ == "__main__":
     plt.rcParams['figure.constrained_layout.use'] = False
 
     dataset = pd.read_csv(DATAFILE, header=[0,1,2])
-    is_oral_cavity = dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES)
+    is_oral_cavity = dataset["tumor", "1", "subsite"].isin(
+        icd for icd_list in ORAL_CAVITY_ICD_CODES.values() for icd in icd_list
+    )
     dataset = dataset.loc[is_oral_cavity].astype({
         ("tumor", "1", "central"): bool,
         ("tumor", "1", "extension"): bool,
@@ -86,8 +89,8 @@ if __name__ == "__main__":
     ax["contra midext"]  = fig.add_subplot(gs[1,0])
     ax["contra ipsiIII"] = fig.add_subplot(gs[1,1], sharey=ax["contra midext"])
 
-    ax["HPV early"] = fig.add_subplot(gs[2,0])
-    ax["HPV late"]  = fig.add_subplot(gs[2,1], sharey=ax["HPV early"])
+    ax["first_subsites"] = fig.add_subplot(gs[2,0])
+    ax["last_subsites"] = fig.add_subplot(gs[2,1], sharey=ax["first_subsites"])
 
     # first row, prevalence of involvement ipsi- & contralaterally
     prev_ipsi = 100 * (max_llh_data["ipsi"] == True).sum() / num_total
@@ -232,75 +235,47 @@ if __name__ == "__main__":
     ax["contra ipsiIII"].legend()
     plt.setp(ax["contra ipsiIII"].get_yticklabels(), visible=False)
 
-    # third row, HPV positive vs negative
-    num_HPVpos_early = len(max_llh_data.loc[hpv_positive & (t_stages <= 2)])
-    num_HPVneg_early = len(max_llh_data.loc[hpv_negative & (t_stages <= 2)])
-    ipsi_HPVpos_early = (100 / num_HPVpos_early) * (
-        max_llh_data["ipsi"] == True
-    ).loc[hpv_positive & (t_stages <= 2)].sum()
-    ipsi_HPVneg_early = (100 / num_HPVneg_early) * (
-        max_llh_data["ipsi"] == True
-    ).loc[hpv_negative & (t_stages <= 2)].sum()
+    # third row, involvement by subsite
+    idx = 0
+    axes = ax["first_subsites"]
+    for i, (subsite, icd_list) in enumerate(ORAL_CAVITY_ICD_CODES.items()):
+        if subsite in ["parotid gland", "other salivary glands"]:
+            continue
 
-    ax["HPV early"].bar(
-        POSITIONS,
-        ipsi_HPVpos_early[LABELS],
-        label=f"HPV+ ({num_HPVpos_early})",
-        width=WIDTHS
-    )
-    ax["HPV early"].bar(
-        POSITIONS - SPACE/2.,
-        ipsi_HPVneg_early[LABELS],
-        label=f"HPV- ({num_HPVneg_early})",
-        width=WIDTHS
-    )
-    ax["HPV early"].set_xticks(POSITIONS - SPACE/2.)
-    ax["HPV early"].set_xticklabels(LABELS)
-    ax["HPV early"].set_ylabel("ipsilateral involvement [%]")
-    ax["HPV early"].grid(axis='x')
-    ax["HPV early"].annotate(
-        "T1 & T2", (0.5, 0.92),
-        xycoords="axes fraction", horizontalalignment="center"
-    )
-    ax["HPV early"].legend()
+        if i == 3:
+            idx = 0
+            axes = ax["last_subsites"]
 
-    num_HPVpos_late = len(max_llh_data.loc[hpv_positive & (t_stages > 2)])
-    num_HPVneg_late = len(max_llh_data.loc[hpv_negative & (t_stages > 2)])
-    ipsi_HPVpos_late = (100 / num_HPVpos_late) * (
-        max_llh_data["ipsi"] == True
-    ).loc[hpv_positive & (t_stages > 2)].sum()
-    ipsi_HPVneg_late = (100 / num_HPVneg_late) * (
-        max_llh_data["ipsi"] == True
-    ).loc[hpv_negative & (t_stages > 2)].sum()
+        is_subsite = dataset["tumor", "1", "subsite"].isin(icd_list)
+        total = sum(is_subsite)
+        frequency = 100. * max_llh_data.loc[is_subsite]["ipsi"].sum() / total
+        axes.bar(
+            POSITIONS + (idx - 2) * SPACE/3.,
+            frequency[LABELS],
+            label=f"{subsite} ({total})",
+            width=WIDTHS,
+            color=SUBSITE_COLOR_LIST[idx],
+            zorder=5-idx,
+        )
+        idx += 1
 
-    ax["HPV late"].bar(
-        POSITIONS,
-        ipsi_HPVpos_late[LABELS],
-        label=f"HPV+ ({num_HPVpos_late})",
-        width=WIDTHS
-    )
-    ax["HPV late"].bar(
-        POSITIONS - SPACE/2.,
-        ipsi_HPVneg_late[LABELS],
-        label=f"HPV- ({num_HPVneg_late})",
-        width=WIDTHS
-    )
-    ax["HPV late"].set_xticks(POSITIONS - SPACE/2.)
-    ax["HPV late"].set_xticklabels(LABELS)
-    ax["HPV late"].grid(axis='x')
-    plt.setp(ax["HPV late"].get_yticklabels(), visible=False)
-    ax["HPV late"].annotate(
-        "T3 & T4", (0.5, 0.92),
-        xycoords="axes fraction", horizontalalignment="center"
-    )
-    ax["HPV late"].legend()
+    ax["first_subsites"].set_xticks(POSITIONS - SPACE/2.)
+    ax["first_subsites"].set_xticklabels(LABELS)
+    ax["first_subsites"].grid(axis='x')
+    ax["first_subsites"].set_ylabel("subsite involvement [%]")
+    ax["first_subsites"].legend()
+
+    ax["last_subsites"].set_xticks(POSITIONS - SPACE/2.)
+    ax["last_subsites"].set_xticklabels(LABELS)
+    ax["last_subsites"].grid(axis='x')
+    ax["last_subsites"].legend()
 
     # labelling the six subplots
     ax["prevalence contra"].annotate("a)", (0.04, 0.92), xycoords="axes fraction")
     ax["prevalence ipsi"].annotate("b)", (0.96, 0.92), xycoords="axes fraction", horizontalalignment="right")
     ax["contra midext"].annotate("c)", (0.04, 0.92), xycoords="axes fraction")
     ax["contra ipsiIII"].annotate("d)", (0.04, 0.92), xycoords="axes fraction")
-    ax["HPV early"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
-    ax["HPV late"].annotate("f)", (0.04, 0.92), xycoords="axes fraction")
+    ax["first_subsites"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
+    ax["last_subsites"].annotate("f)", (0.04, 0.92), xycoords="axes fraction")
 
     plt.savefig(OUTPUT_DIR / OUTPUT_NAME)

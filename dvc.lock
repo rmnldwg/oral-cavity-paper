@@ -50,24 +50,24 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: 06d2b537bf77f92f28aaa36717e95e76
+      md5: f2089e9402e274b0fd8a0e1653aefc9c
       size: 454557
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 06d2b537bf77f92f28aaa36717e95e76
+      md5: f2089e9402e274b0fd8a0e1653aefc9c
       size: 454557
     - path: scripts/statistics.py
-      md5: a30186373df8ad9c894d10beed36177d
-      size: 10644
+      md5: f2c75845319f7c66715632b7dda26544
+      size: 9902
     outs:
     - path: figures/statistics.png
-      md5: ffe6efb6d11429ded5c87e416350e483
-      size: 192510
+      md5: a5a812c5bdb23814040fe5c388854927
+      size: 199755
   copy:
     cmd: "cp figures/statistics.png /home/rmnldwg/OneDrive_USZ/Oral\\ Cavity\\ Paper/figures/statistics.png\n"
     deps:
     - path: figures/statistics.png
-      md5: ffe6efb6d11429ded5c87e416350e483
-      size: 192510
+      md5: a5a812c5bdb23814040fe5c388854927
+      size: 199755
