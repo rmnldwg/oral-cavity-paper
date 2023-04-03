@@ -50,7 +50,7 @@ stages:
     desc: Copy the statstics plot over into the teams folder.
     vars:
       - input: figures/statistics.png
-      - output: /home/rmnldwg/OneDrive_USZ/Oral\ Cavity\ Paper/figures/statistics.png
+      - output: /home/rmnldwg/OneDrive_USZ/50-59\ Research/53\ Lymphatic\ Progression/53.24\ Paper\ Oral\ Cavity\ Dataset/figures/statistics.png
     cmd: >
       cp ${input} ${output}
     deps:

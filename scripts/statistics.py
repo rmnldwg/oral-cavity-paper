@@ -28,8 +28,8 @@ ORAL_CAVITY_ICD_CODES = {
 
 # barplot settings
 WIDTH, SPACE = 0.8, 0.4
-LABELS  =          ["Ia"   , "Ib"   , "IIa"  , "IIb"  , "III", "IV" , "V"  ]
-WIDTHS  = np.array([WIDTH/2, WIDTH/2, WIDTH/2, WIDTH/2, WIDTH, WIDTH, WIDTH])
+LABELS  =          ["Ia"   , "Ib"   , "II" , "III", "IV" , "V"  ]
+WIDTHS  = np.array([WIDTH/2, WIDTH/2, WIDTH, WIDTH, WIDTH, WIDTH])
 POSITIONS = np.array([np.sum(WIDTHS[0:i])+i*SPACE for i in range(len(WIDTHS))])
 POSITIONS[0] -= SPACE/2
 POSITIONS[1] -= SPACE/2
@@ -253,7 +253,7 @@ if __name__ == "__main__":
             POSITIONS + (idx - 2) * SPACE/3.,
             frequency[LABELS],
             label=f"{subsite} ({total})",
-            width=WIDTHS,
+            width=0.8 * WIDTHS,
             color=SUBSITE_COLOR_LIST[idx],
             zorder=5-idx,
         )
