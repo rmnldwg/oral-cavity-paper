@@ -33,8 +33,8 @@ WIDTHS  = np.array([WIDTH/2, WIDTH/2, WIDTH, WIDTH, WIDTH, WIDTH])
 POSITIONS = np.array([np.sum(WIDTHS[0:i])+i*SPACE for i in range(len(WIDTHS))])
 POSITIONS[0] -= SPACE/2
 POSITIONS[1] -= SPACE/2
-POSITIONS[2] -= SPACE/2
-POSITIONS[3] -= SPACE/2
+# POSITIONS[2] -= SPACE/2
+# POSITIONS[3] -= SPACE/2
 
 COLORS = {
     "green": '#00afa5',
@@ -43,8 +43,7 @@ COLORS = {
     "orange": '#f17900',
     "gray": '#c5d5db',
 }
-COLOR_CYCLE = cycler(color=[COLORS["red"], COLORS["green"]])
-SUBSITE_COLOR_LIST = [COLORS["green"], COLORS["red"], COLORS["orange"]]
+COLOR_CYCLE = cycler(color=[COLORS["red"], COLORS["green"], COLORS["orange"]])
 
 
 if __name__ == "__main__":
@@ -56,16 +55,18 @@ if __name__ == "__main__":
     is_oral_cavity = dataset["tumor", "1", "subsite"].isin(
         icd for icd_list in ORAL_CAVITY_ICD_CODES.values() for icd in icd_list
     )
-    dataset = dataset.loc[is_oral_cavity].astype({
-        ("tumor", "1", "central"): bool,
-        ("tumor", "1", "extension"): bool,
-    })
+    dataset = dataset.loc[is_oral_cavity]
 
 
     t_stages = dataset["tumor", "1", "t_stage"]
+    
     hpv_positive = dataset["patient", "#", "hpv_status"] == True
     hpv_negative = dataset["patient", "#", "hpv_status"] == False
-    mid_ext = dataset["tumor", "1", "extension"]
+    
+    has_midext = dataset["tumor", "1", "extension"] == True
+    has_not_midext = dataset["tumor", "1", "extension"] == False
+    has_midext_unknown = dataset["tumor", "1", "extension"].isna()
+    
     max_llh_data = dataset["max_llh"]
 
     num_total = len(max_llh_data)
@@ -175,25 +176,36 @@ if __name__ == "__main__":
     ax["row0"].set_yticks([])
 
     # second row, contralateral involvement depending on midline extension and ipsilateral level III
-    num_midext = len(max_llh_data[mid_ext])
-    num_nomidext = len(max_llh_data[~mid_ext])
-    contra_midext = (100 / num_midext) * (
+    num_has_midext = sum(has_midext)
+    num_has_not_midext = sum(has_not_midext)
+    num_has_midext_unknown = sum(has_midext_unknown)
+
+    contra_has_midext = (100 / num_has_midext) * (
         max_llh_data["contra"] == True
-    ).loc[mid_ext].sum()
-    contra_nomidext = (100 / num_nomidext) * (
+    ).loc[has_midext].sum()
+    contra_has_not_midext = (100 / num_has_not_midext) * (
         max_llh_data["contra"] == True
-    ).loc[~mid_ext].sum()
+    ).loc[has_not_midext].sum()
+    contra_has_midext_unknown = (100 / num_has_midext_unknown) * (
+        max_llh_data["contra"] == True
+    ).loc[has_midext_unknown].sum()
 
     ax["contra midext"].bar(
-        POSITIONS,
-        contra_midext[LABELS],
-        label=f"with midline extension ({num_midext})",
+        POSITIONS - SPACE/3.,
+        contra_has_midext[LABELS],
+        label=f"midline extension ({num_has_midext})",
         width=WIDTHS
     )
     ax["contra midext"].bar(
-        POSITIONS - SPACE/2.,
-        contra_nomidext[LABELS],
-        label=f"without midline extension ({num_nomidext})",
+        POSITIONS,
+        contra_has_not_midext[LABELS],
+        label=f"clearly lateralized ({num_has_not_midext})",
+        width=WIDTHS
+    )
+    ax["contra midext"].bar(
+        POSITIONS + SPACE/3.,
+        contra_has_midext_unknown[LABELS],
+        label=f"clearly lateralized ({num_has_midext_unknown})",
         width=WIDTHS
     )
     ax["contra midext"].set_xticks(POSITIONS - SPACE/2.)
@@ -254,7 +266,6 @@ if __name__ == "__main__":
             frequency[LABELS],
             label=f"{subsite} ({total})",
             width=0.8 * WIDTHS,
-            color=SUBSITE_COLOR_LIST[idx],
             zorder=5-idx,
         )
         idx += 1
