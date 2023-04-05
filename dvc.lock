@@ -59,16 +59,16 @@ stages:
       md5: f2089e9402e274b0fd8a0e1653aefc9c
       size: 454557
     - path: scripts/statistics.py
-      md5: b8e81f368f49b863ee30c859083fbe5f
-      size: 10918
+      md5: f63b92fc6364d37d5cf57cbf865f39e5
+      size: 9973
     outs:
     - path: figures/statistics.png
-      md5: fd1e73196b84fe62904401298b37bce8
-      size: 184155
+      md5: 41f5d1fcae503d151405d1f637497e8e
+      size: 185127
   copy:
     cmd: "cp figures/statistics.png /home/rmnldwg/OneDrive_USZ/50-59\\ Research/53\\\
       \ Lymphatic\\ Progression/53.24\\ Paper\\ Oral\\ Cavity\\ Dataset/figures/statistics.png\n"
     deps:
     - path: figures/statistics.png
-      md5: fd1e73196b84fe62904401298b37bce8
-      size: 184155
+      md5: 41f5d1fcae503d151405d1f637497e8e
+      size: 185127

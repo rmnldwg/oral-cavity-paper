@@ -27,8 +27,8 @@ ORAL_CAVITY_ICD_CODES = {
         "C06.9",
     ],
     "floor of mouth": ["C04", "C04.0", "C04.1", "C04.8", "C04.9",],
-    "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",],
-    "salivary glands": ["C08", "C08.0", "C08.1", "C08.9",],
+    # "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",],
+    # "salivary glands": ["C08", "C08.0", "C08.1", "C08.9",],
 }
 
 # barplot settings
@@ -119,8 +119,7 @@ if __name__ == "__main__":
     ax["contra midext"]  = fig.add_subplot(gs[1,0])
     ax["contra ipsiI"] = fig.add_subplot(gs[1,1], sharey=ax["contra midext"])
 
-    ax["subsites: tongue, gums, cheek"] = fig.add_subplot(gs[2,0])
-    ax["subsites: floor of mouth, palate"] = fig.add_subplot(gs[2,1], sharey=ax["subsites: tongue, gums, cheek"])
+    ax["subsites"] = fig.add_subplot(gs[2,0])
 
     # first row, prevalence of involvement ipsi- & contralaterally
     ax["prevalence ipsi"].barh(
@@ -239,8 +238,8 @@ if __name__ == "__main__":
     plt.setp(ax["contra ipsiI"].get_yticklabels(), visible=False)
 
     # third row, involvement by subsite
-    ax["subsites: tongue, gums, cheek"].bar(
-        POSITIONS,
+    ax["subsites"].bar(
+        POSITIONS + SPACE/3.,
         get_prevalence(
             max_llh_data["ipsi"],
             subsites.isin(ORAL_CAVITY_ICD_CODES["tongue"]),
@@ -249,8 +248,8 @@ if __name__ == "__main__":
         label=f"tongue ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['tongue']))})",
         width=WIDTHS,
     )
-    ax["subsites: tongue, gums, cheek"].bar(
-        POSITIONS - SPACE/2.,
+    ax["subsites"].bar(
+        POSITIONS,
         get_prevalence(
             max_llh_data["ipsi"],
             subsites.isin(ORAL_CAVITY_ICD_CODES["gums and cheeks"]),
@@ -258,20 +257,10 @@ if __name__ == "__main__":
         ),
         label=f"gums and cheek ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['gums and cheeks']))})",
         width=WIDTHS,
+        color=COLORS["orange"]
     )
-
-    ax["subsites: floor of mouth, palate"].bar(
-        POSITIONS,
-        get_prevalence(
-            max_llh_data["ipsi"],
-            subsites.isin(ORAL_CAVITY_ICD_CODES["palate"]),
-            lnls=LABELS,
-        ),
-        label=f"palate ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['palate']))})",
-        width=WIDTHS,
-    )
-    ax["subsites: floor of mouth, palate"].bar(
-        POSITIONS - SPACE/2.,
+    ax["subsites"].bar(
+        POSITIONS - SPACE/3.,
         get_prevalence(
             max_llh_data["ipsi"],
             subsites.isin(ORAL_CAVITY_ICD_CODES["floor of mouth"]),
@@ -279,25 +268,20 @@ if __name__ == "__main__":
         ),
         label=f"floor of mouth ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['floor of mouth']))})",
         width=WIDTHS,
+        color=COLORS["green"]
     )
 
-    ax["subsites: tongue, gums, cheek"].set_xticks(POSITIONS - SPACE/2.)
-    ax["subsites: tongue, gums, cheek"].set_xticklabels(LABELS)
-    ax["subsites: tongue, gums, cheek"].grid(axis='x')
-    ax["subsites: tongue, gums, cheek"].set_ylabel("subsite involvement [%]")
-    ax["subsites: tongue, gums, cheek"].legend()
-
-    ax["subsites: floor of mouth, palate"].set_xticks(POSITIONS - SPACE/2.)
-    ax["subsites: floor of mouth, palate"].set_xticklabels(LABELS)
-    ax["subsites: floor of mouth, palate"].grid(axis='x')
-    ax["subsites: floor of mouth, palate"].legend()
+    ax["subsites"].set_xticks(POSITIONS - SPACE/2.)
+    ax["subsites"].set_xticklabels(LABELS)
+    ax["subsites"].grid(axis='x')
+    ax["subsites"].set_ylabel("subsite involvement [%]")
+    ax["subsites"].legend()
 
     # labelling the six subplots
     ax["prevalence contra"].annotate("a)", (0.04, 0.92), xycoords="axes fraction")
     ax["prevalence ipsi"].annotate("b)", (0.96, 0.92), xycoords="axes fraction", horizontalalignment="right")
     ax["contra midext"].annotate("c)", (0.04, 0.92), xycoords="axes fraction")
     ax["contra ipsiI"].annotate("d)", (0.04, 0.92), xycoords="axes fraction")
-    ax["subsites: tongue, gums, cheek"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
-    ax["subsites: floor of mouth, palate"].annotate("f)", (0.04, 0.92), xycoords="axes fraction")
+    ax["subsites"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
 
     plt.savefig(OUTPUT_DIR / OUTPUT_NAME)
