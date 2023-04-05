@@ -51,7 +51,6 @@ COLORS = {
     "orange": '#f17900',
     "gray": '#c5d5db',
 }
-COLOR_CYCLE = cycler(color=[COLORS["red"], COLORS["green"], COLORS["orange"]])
 
 
 def get_prevalence(
@@ -77,7 +76,7 @@ def get_prevalence(
 
 if __name__ == "__main__":
     plt.style.use(MPLSTYLE)
-    plt.rc("axes", prop_cycle=COLOR_CYCLE)
+    plt.rc("axes", prop_cycle=cycler(color=[COLORS["red"], COLORS["orange"], COLORS["green"]]))
     plt.rcParams['figure.constrained_layout.use'] = False
 
     dataset = pd.read_csv(DATAFILE, header=[0,1,2])
@@ -92,11 +91,14 @@ if __name__ == "__main__":
     hpv_positive = dataset["patient", "#", "hpv_status"] == True
     hpv_negative = dataset["patient", "#", "hpv_status"] == False
 
+    extracapsular = dataset["patient", "#", "extracapsular"]
+
     has_midext = dataset["tumor", "1", "extension"] == True
     has_not_midext = dataset["tumor", "1", "extension"] == False
     has_midext_unknown = dataset["tumor", "1", "extension"].isna()
 
     max_llh_data = dataset["max_llh"]
+    is_n0 = max_llh_data.sum(axis=1) == 0
 
     num_total = len(max_llh_data)
     num_early = (t_stages <= 2).sum()
@@ -114,25 +116,28 @@ if __name__ == "__main__":
     # define axes to plot on
     ax["prevalence contra"] = fig.add_subplot(gs[0,0])
     ax["prevalence ipsi"]   = fig.add_subplot(gs[0,1], sharey=ax["prevalence contra"])
-    ax["row0"] = fig.add_subplot(gs[0,:], frame_on=False)
+    ax["top row"] = fig.add_subplot(gs[0,:], frame_on=False)
 
     ax["contra midext"]  = fig.add_subplot(gs[1,0])
-    ax["contra ipsiI"] = fig.add_subplot(gs[1,1], sharey=ax["contra midext"])
+    ax["contra ipsi"] = fig.add_subplot(gs[1,1], sharey=ax["contra midext"])
 
     ax["subsites"] = fig.add_subplot(gs[2,0])
+    ax["extracapsular"] = fig.add_subplot(gs[2,1])
 
     # first row, prevalence of involvement ipsi- & contralaterally
     ax["prevalence ipsi"].barh(
         POSITIONS,
         get_prevalence(max_llh_data["ipsi"], t_stages > 2, lnls=LABELS),
         label=f"T3 & T4 ({num_late})",
-        height=WIDTHS
+        height=WIDTHS,
+        color=COLORS["red"]
     )
     ax["prevalence ipsi"].barh(
         POSITIONS - SPACE/2.,
         get_prevalence(max_llh_data["ipsi"], t_stages <= 2, lnls=LABELS),
         label=f"T1 & T2 ({num_early})",
-        height=WIDTHS
+        height=WIDTHS,
+        color=COLORS["green"]
     )
     ax["prevalence ipsi"].scatter(
         get_prevalence(max_llh_data["ipsi"], lnls=LABELS),
@@ -159,13 +164,15 @@ if __name__ == "__main__":
         POSITIONS,
         get_prevalence(max_llh_data["contra"], t_stages > 2, lnls=LABELS),
         label=f"T3 & T4 ({num_late})",
-        height=WIDTHS
+        height=WIDTHS,
+        color=COLORS["red"]
     )
     ax["prevalence contra"].barh(
         POSITIONS - SPACE/2.,
         get_prevalence(max_llh_data["contra"], t_stages <= 2, lnls=LABELS),
         label=f"T1 & T2 ({num_early})",
-        height=WIDTHS
+        height=WIDTHS,
+        color=COLORS["green"]
     )
     ax["prevalence contra"].scatter(
         get_prevalence(max_llh_data["contra"], lnls=LABELS),
@@ -187,9 +194,9 @@ if __name__ == "__main__":
     )
     ax["prevalence contra"].legend(loc="lower left")
 
-    ax["row0"].set_xlabel("prevalence of involvement [%]", labelpad=9)
-    ax["row0"].set_xticks([])
-    ax["row0"].set_yticks([])
+    ax["top row"].set_xlabel("prevalence of involvement [%]", labelpad=9)
+    ax["top row"].set_xticks([])
+    ax["top row"].set_yticks([])
 
     # second row, contralateral involvement depending on midline extension and ipsilateral level III
     ax["contra midext"].bar(
@@ -199,43 +206,52 @@ if __name__ == "__main__":
         width=WIDTHS,
     )
     ax["contra midext"].bar(
+        POSITIONS,
+        get_prevalence(max_llh_data["contra"], has_midext_unknown, lnls=LABELS),
+        label=f"lateralization unknown ({sum(has_midext_unknown)})",
+        width=WIDTHS,
+    )
+    ax["contra midext"].bar(
         POSITIONS - SPACE/3.,
         get_prevalence(max_llh_data["contra"], has_not_midext, lnls=LABELS),
         label=f"clearly lateralized ({sum(has_not_midext)})",
         width=WIDTHS,
         zorder=1.2,
     )
-    ax["contra midext"].bar(
-        POSITIONS,
-        get_prevalence(max_llh_data["contra"], has_midext_unknown, lnls=LABELS),
-        label=f"lateralization unknown ({sum(has_midext_unknown)})",
-        width=WIDTHS,
-    )
-    ax["contra midext"].set_xticks(POSITIONS)
+    ax["contra midext"].set_xticks(POSITIONS - SPACE/3.)
     ax["contra midext"].set_xticklabels(LABELS)
     ax["contra midext"].grid(axis='x')
     ax["contra midext"].set_ylabel("contralateral involvement [%]")
     ax["contra midext"].legend()
 
-    has_ipsi_I = max_llh_data["ipsi", "I"] == True
+    is_ipsi_n0 = max_llh_data["ipsi"].sum(axis=1) == 0
+    has_ipsi_one = max_llh_data["ipsi"].sum(axis=1) == 1
+    has_ipsi_more = max_llh_data["ipsi"].sum(axis=1) > 1
 
-    ax["contra ipsiI"].bar(
+    ax["contra ipsi"].bar(
+        POSITIONS + SPACE/3.,
+        get_prevalence(max_llh_data["contra"], has_ipsi_more, lnls=LABELS),
+        label=f"more than 2 ipsi LNLs ({sum(has_ipsi_more)})",
+        width=WIDTHS,
+    )
+    ax["contra ipsi"].bar(
         POSITIONS,
-        get_prevalence(max_llh_data["contra"], has_ipsi_I, lnls=LABELS),
-        label=f"with involvement in LNL I ({sum(has_ipsi_I)})",
+        get_prevalence(max_llh_data["contra"], has_ipsi_one, lnls=LABELS),
+        label=f"one ipsi LNL ({sum(has_ipsi_one)})",
         width=WIDTHS,
     )
-    ax["contra ipsiI"].bar(
-        POSITIONS - SPACE/2.,
-        get_prevalence(max_llh_data["contra"], ~has_ipsi_I, lnls=LABELS),
-        label=f"without involvement in LNL I ({sum(~has_ipsi_I)})",
+    ax["contra ipsi"].bar(
+        POSITIONS - SPACE/3.,
+        get_prevalence(max_llh_data["contra"], is_ipsi_n0, lnls=LABELS),
+        label=f"ipsi N0 ({sum(is_ipsi_n0)})",
         width=WIDTHS,
     )
-    ax["contra ipsiI"].set_xticks(POSITIONS - SPACE/2.)
-    ax["contra ipsiI"].set_xticklabels(LABELS)
-    ax["contra ipsiI"].grid(axis='x')
-    ax["contra ipsiI"].legend()
-    plt.setp(ax["contra ipsiI"].get_yticklabels(), visible=False)
+
+    ax["contra ipsi"].set_xticks(POSITIONS - SPACE/3.)
+    ax["contra ipsi"].set_xticklabels(LABELS)
+    ax["contra ipsi"].grid(axis='x')
+    ax["contra ipsi"].legend()
+    plt.setp(ax["contra ipsi"].get_yticklabels(), visible=False)
 
     # third row, involvement by subsite
     ax["subsites"].bar(
@@ -252,36 +268,61 @@ if __name__ == "__main__":
         POSITIONS,
         get_prevalence(
             max_llh_data["ipsi"],
-            subsites.isin(ORAL_CAVITY_ICD_CODES["gums and cheeks"]),
-            lnls=LABELS,
-        ),
-        label=f"gums and cheek ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['gums and cheeks']))})",
-        width=WIDTHS,
-        color=COLORS["orange"]
-    )
-    ax["subsites"].bar(
-        POSITIONS - SPACE/3.,
-        get_prevalence(
-            max_llh_data["ipsi"],
             subsites.isin(ORAL_CAVITY_ICD_CODES["floor of mouth"]),
             lnls=LABELS,
         ),
         label=f"floor of mouth ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['floor of mouth']))})",
         width=WIDTHS,
-        color=COLORS["green"]
+    )
+    ax["subsites"].bar(
+        POSITIONS - SPACE/3.,
+        get_prevalence(
+            max_llh_data["ipsi"],
+            subsites.isin(ORAL_CAVITY_ICD_CODES["gums and cheeks"]),
+            lnls=LABELS,
+        ),
+        label=f"gums and cheek ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['gums and cheeks']))})",
+        width=WIDTHS,
     )
 
-    ax["subsites"].set_xticks(POSITIONS - SPACE/2.)
+    ax["subsites"].set_xticks(POSITIONS - SPACE/3.)
     ax["subsites"].set_xticklabels(LABELS)
     ax["subsites"].grid(axis='x')
     ax["subsites"].set_ylabel("subsite involvement [%]")
     ax["subsites"].legend()
 
+    # fourth row, extracapsular involvement
+    is_not_n0_and_has_not_ece = (extracapsular == False) & ~is_n0
+    has_ece = extracapsular == True
+
+    ax["extracapsular"].bar(
+        POSITIONS + SPACE/2.,
+        get_prevalence(max_llh_data["ipsi"], has_ece, lnls=LABELS),
+        label=f"extracapsular extension ({sum(has_ece)})",
+        width=WIDTHS,
+    )
+    ax["extracapsular"].bar(
+        POSITIONS,
+        get_prevalence(max_llh_data["ipsi"], is_not_n0_and_has_not_ece, lnls=LABELS),
+        label=f"no extracapsular extension ({sum(is_not_n0_and_has_not_ece)})",
+        width=WIDTHS,
+        color=COLORS["green"]
+    )
+
+    ax["extracapsular"].set_xticks(POSITIONS)
+    ax["extracapsular"].set_xticklabels(LABELS)
+    ax["extracapsular"].grid(axis='x')
+    ax["extracapsular"].yaxis.set_label_position("right")
+    ax["extracapsular"].yaxis.tick_right()
+    ax["extracapsular"].set_ylabel("involvement [%]")
+    ax["extracapsular"].legend()
+
     # labelling the six subplots
     ax["prevalence contra"].annotate("a)", (0.04, 0.92), xycoords="axes fraction")
     ax["prevalence ipsi"].annotate("b)", (0.96, 0.92), xycoords="axes fraction", horizontalalignment="right")
     ax["contra midext"].annotate("c)", (0.04, 0.92), xycoords="axes fraction")
-    ax["contra ipsiI"].annotate("d)", (0.04, 0.92), xycoords="axes fraction")
+    ax["contra ipsi"].annotate("d)", (0.04, 0.92), xycoords="axes fraction")
     ax["subsites"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
+    ax["extracapsular"].annotate("f)", (0.04, 0.92), xycoords="axes fraction")
 
     plt.savefig(OUTPUT_DIR / OUTPUT_NAME)

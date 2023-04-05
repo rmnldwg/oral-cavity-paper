@@ -5,22 +5,22 @@ stages:
       \ --output data/joined.csv\n"
     deps:
     - path: data/2022-clb-multisite.csv
-      md5: 96e24966aef559a8652d5ef77cb67f7c
-      size: 118182
+      md5: c314b7b65b23b6dd5c0ac4e51b3646ca
+      size: 120291
     - path: data/2022-isb-multisite.csv
-      md5: 83d93b989058a60c838bc2926eeaf20f
-      size: 182502
+      md5: 1e93faee094990b1022a83eb116a426b
+      size: 184432
     outs:
     - path: data/joined.csv
-      md5: 1052c0c5e38bec77383531a7ef4dcb5e
-      size: 353892
+      md5: 71841879203909ee89857bd241e49981
+      size: 357907
   enhance:
     cmd: "lyscripts data enhance data/joined.csv data/enhanced.csv --modalities CT\
       \ MRI PET FNA diagnostic_consensus pathology pCT\n"
     deps:
     - path: data/joined.csv
-      md5: 1052c0c5e38bec77383531a7ef4dcb5e
-      size: 353892
+      md5: 71841879203909ee89857bd241e49981
+      size: 357907
     params:
       params.yaml:
         modalities:
@@ -50,25 +50,25 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: f2089e9402e274b0fd8a0e1653aefc9c
-      size: 454557
+      md5: 49e832b6c15837f4322b2619bcb28674
+      size: 458572
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: f2089e9402e274b0fd8a0e1653aefc9c
-      size: 454557
+      md5: 49e832b6c15837f4322b2619bcb28674
+      size: 458572
     - path: scripts/statistics.py
-      md5: f63b92fc6364d37d5cf57cbf865f39e5
-      size: 9973
+      md5: fb1b24c4b549f07f1662b21e6bdcd60c
+      size: 11521
     outs:
     - path: figures/statistics.png
-      md5: 41f5d1fcae503d151405d1f637497e8e
-      size: 185127
+      md5: b14a065a879f39a4aa9f3ea971d4a2ee
+      size: 223598
   copy:
     cmd: "cp figures/statistics.png /home/rmnldwg/OneDrive_USZ/50-59\\ Research/53\\\
       \ Lymphatic\\ Progression/53.24\\ Paper\\ Oral\\ Cavity\\ Dataset/figures/statistics.png\n"
     deps:
     - path: figures/statistics.png
-      md5: 41f5d1fcae503d151405d1f637497e8e
-      size: 185127
+      md5: b14a065a879f39a4aa9f3ea971d4a2ee
+      size: 223598
