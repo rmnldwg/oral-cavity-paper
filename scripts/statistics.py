@@ -1,7 +1,11 @@
 """
 Plot panel with patient cohort statistics for the joined CLB & ISB dataset.
 """
+# pylint: disable=singleton-comparison
+from cProfile import label
 from pathlib import Path
+from typing import List
+
 import numpy as np
 import pandas as pd
 from cycler import cycler
@@ -17,24 +21,28 @@ OUTPUT_DIR = Path("./figures")
 MPLSTYLE = Path("./scripts/.mplstyle")
 
 ORAL_CAVITY_ICD_CODES = {
-    "tongue": ["C02", "C02.0", "C02.1", "C02.2", "C02.3", "C02.4", "C02.8", "C02.9"],
-    "gum": ["C03", "C03.0", "C03.1", "C03.9"],
-    "floor of mouth": ["C04", "C04.0", "C04.1", "C04.8", "C04.9"],
-    "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9"],
-    "other parts of mouth": ["C06", "C06.0", "C06.1", "C06.2", "C06.8", "C06.9"],
-    "parotid gland": ["C07"],
-    "other salivary glands": ["C08", "C08.0", "C08.1", "C08.9"],
+    "tongue": ["C02", "C02.0", "C02.1", "C02.2", "C02.3", "C02.4", "C02.8", "C02.9",],
+    "gums and cheeks": [
+        "C03", "C03.0", "C03.1", "C03.9", "C06", "C06.0", "C06.1", "C06.2", "C06.8",
+        "C06.9",
+    ],
+    "floor of mouth": ["C04", "C04.0", "C04.1", "C04.8", "C04.9",],
+    "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",],
+    "salivary glands": ["C08", "C08.0", "C08.1", "C08.9",],
 }
 
 # barplot settings
-WIDTH, SPACE = 0.8, 0.4
+WIDTH, SPACE = 0.8, 0.6
 LABELS  =          ["Ia"   , "Ib"   , "II" , "III", "IV" , "V"  ]
 WIDTHS  = np.array([WIDTH/2, WIDTH/2, WIDTH, WIDTH, WIDTH, WIDTH])
-POSITIONS = np.array([np.sum(WIDTHS[0:i])+i*SPACE for i in range(len(WIDTHS))])
-POSITIONS[0] -= SPACE/2
-POSITIONS[1] -= SPACE/2
-# POSITIONS[2] -= SPACE/2
-# POSITIONS[3] -= SPACE/2
+
+# compute positions of bar centers based on WIDTHS and SPACE, such that the space
+# between neighboring bars is SPACE. The first bar is centered at SPACE/2 + WIDTH/2.
+POSITIONS = np.zeros_like(WIDTHS)
+for i, width in enumerate(WIDTHS):
+    spaces = (0.5 + i) * SPACE
+    widths = sum(WIDTHS[:np.maximum(0,i)]) + width/2
+    POSITIONS[i] = spaces + widths
 
 COLORS = {
     "green": '#00afa5',
@@ -44,6 +52,27 @@ COLORS = {
     "gray": '#c5d5db',
 }
 COLOR_CYCLE = cycler(color=[COLORS["red"], COLORS["green"], COLORS["orange"]])
+
+
+def get_prevalence(
+    data: pd.DataFrame,
+    locs: pd.Series | None = None,
+    lnls: List[str] | None = None,
+) -> pd.Series:
+    """Compute the prevalence of lymphatic involvement in any given LNL in percent.
+
+    Args:
+        data: Table with rows of patients and columns of LNLs.
+        locs: Indices of patients to consider.
+        lnls: LNLs to consider.
+    """
+    num = len(data)
+    if locs is not None:
+        data = data.loc[locs]
+        num = sum(locs)
+
+    prevalences = 100 * (data == True).sum() / num
+    return prevalences[lnls] if lnls else prevalences
 
 
 if __name__ == "__main__":
@@ -57,16 +86,16 @@ if __name__ == "__main__":
     )
     dataset = dataset.loc[is_oral_cavity]
 
-
     t_stages = dataset["tumor", "1", "t_stage"]
-    
+    subsites = dataset["tumor", "1", "subsite"]
+
     hpv_positive = dataset["patient", "#", "hpv_status"] == True
     hpv_negative = dataset["patient", "#", "hpv_status"] == False
-    
+
     has_midext = dataset["tumor", "1", "extension"] == True
     has_not_midext = dataset["tumor", "1", "extension"] == False
     has_midext_unknown = dataset["tumor", "1", "extension"].isna()
-    
+
     max_llh_data = dataset["max_llh"]
 
     num_total = len(max_llh_data)
@@ -88,34 +117,31 @@ if __name__ == "__main__":
     ax["row0"] = fig.add_subplot(gs[0,:], frame_on=False)
 
     ax["contra midext"]  = fig.add_subplot(gs[1,0])
-    ax["contra ipsiIII"] = fig.add_subplot(gs[1,1], sharey=ax["contra midext"])
+    ax["contra ipsiI"] = fig.add_subplot(gs[1,1], sharey=ax["contra midext"])
 
-    ax["first_subsites"] = fig.add_subplot(gs[2,0])
-    ax["last_subsites"] = fig.add_subplot(gs[2,1], sharey=ax["first_subsites"])
+    ax["subsites: tongue, gums, cheek"] = fig.add_subplot(gs[2,0])
+    ax["subsites: floor of mouth, palate"] = fig.add_subplot(gs[2,1], sharey=ax["subsites: tongue, gums, cheek"])
 
     # first row, prevalence of involvement ipsi- & contralaterally
-    prev_ipsi = 100 * (max_llh_data["ipsi"] == True).sum() / num_total
-    prev_ipsi_early = 100 * (max_llh_data["ipsi"] == True).loc[t_stages <= 2].sum() / num_early
-    prev_ipsi_late = 100 * (max_llh_data["ipsi"] == True).loc[t_stages > 2].sum() / num_late
     ax["prevalence ipsi"].barh(
         POSITIONS,
-        prev_ipsi_late[LABELS],
-        label=f"T3 & T4 (ipsilateral, {num_late})",
+        get_prevalence(max_llh_data["ipsi"], t_stages > 2, lnls=LABELS),
+        label=f"T3 & T4 ({num_late})",
         height=WIDTHS
     )
     ax["prevalence ipsi"].barh(
         POSITIONS - SPACE/2.,
-        prev_ipsi_early[LABELS],
-        label=f"T1 & T2 (ipsilateral, {num_early})",
+        get_prevalence(max_llh_data["ipsi"], t_stages <= 2, lnls=LABELS),
+        label=f"T1 & T2 ({num_early})",
         height=WIDTHS
     )
     ax["prevalence ipsi"].scatter(
-        prev_ipsi[LABELS],
-        POSITIONS - SPACE/4,
+        get_prevalence(max_llh_data["ipsi"], lnls=LABELS),
+        POSITIONS - SPACE/4.,
         s=300*WIDTHS,
         color="black",
         marker="|",
-        label=f"total (ipsilateral, {num_total})",
+        label=f"total ({num_total})",
         zorder=5
     )
     y_lim = ax["prevalence ipsi"].get_ylim()
@@ -130,35 +156,26 @@ if __name__ == "__main__":
     ax["prevalence ipsi"].legend(loc="lower right")
     x_lim = ax["prevalence ipsi"].get_xlim()
 
-    prev_contra = (100 / num_total) * (
-        max_llh_data["contra"] == True
-    ).sum()
-    prev_contra_early = (100 / num_early) * (
-        max_llh_data["contra"] == True
-    ).loc[t_stages <= 2].sum()
-    prev_contra_late = (100 / num_late) * (
-        max_llh_data["contra"] == True
-    ).loc[t_stages > 2].sum()
     ax["prevalence contra"].barh(
         POSITIONS,
-        prev_contra_late[LABELS],
-        label=f"T3 & T4 (contralateral, {num_late})",
+        get_prevalence(max_llh_data["contra"], t_stages > 2, lnls=LABELS),
+        label=f"T3 & T4 ({num_late})",
         height=WIDTHS
     )
     ax["prevalence contra"].barh(
         POSITIONS - SPACE/2.,
-        prev_contra_early[LABELS],
-        label=f"T1 & T2 (contralateral, {num_early})",
+        get_prevalence(max_llh_data["contra"], t_stages <= 2, lnls=LABELS),
+        label=f"T1 & T2 ({num_early})",
         height=WIDTHS
     )
     ax["prevalence contra"].scatter(
-        prev_contra[LABELS],
+        get_prevalence(max_llh_data["contra"], lnls=LABELS),
         POSITIONS - SPACE/4,
         s=300*WIDTHS,
         color="black",
         marker="|",
-        label=f"total (contralateral, {num_total})",
-        zorder=5
+        label=f"total ({num_total})",
+        zorder=1.5,
     )
     ax["prevalence contra"].set_ylim(y_lim[::-1])
     ax["prevalence contra"].yaxis.tick_right()
@@ -176,117 +193,111 @@ if __name__ == "__main__":
     ax["row0"].set_yticks([])
 
     # second row, contralateral involvement depending on midline extension and ipsilateral level III
-    num_has_midext = sum(has_midext)
-    num_has_not_midext = sum(has_not_midext)
-    num_has_midext_unknown = sum(has_midext_unknown)
-
-    contra_has_midext = (100 / num_has_midext) * (
-        max_llh_data["contra"] == True
-    ).loc[has_midext].sum()
-    contra_has_not_midext = (100 / num_has_not_midext) * (
-        max_llh_data["contra"] == True
-    ).loc[has_not_midext].sum()
-    contra_has_midext_unknown = (100 / num_has_midext_unknown) * (
-        max_llh_data["contra"] == True
-    ).loc[has_midext_unknown].sum()
-
+    ax["contra midext"].bar(
+        POSITIONS + SPACE/3.,
+        get_prevalence(max_llh_data["contra"], has_midext, lnls=LABELS),
+        label=f"midline extension ({sum(has_midext)})",
+        width=WIDTHS,
+    )
     ax["contra midext"].bar(
         POSITIONS - SPACE/3.,
-        contra_has_midext[LABELS],
-        label=f"midline extension ({num_has_midext})",
-        width=WIDTHS
+        get_prevalence(max_llh_data["contra"], has_not_midext, lnls=LABELS),
+        label=f"clearly lateralized ({sum(has_not_midext)})",
+        width=WIDTHS,
+        zorder=1.2,
     )
     ax["contra midext"].bar(
         POSITIONS,
-        contra_has_not_midext[LABELS],
-        label=f"clearly lateralized ({num_has_not_midext})",
-        width=WIDTHS
+        get_prevalence(max_llh_data["contra"], has_midext_unknown, lnls=LABELS),
+        label=f"lateralization unknown ({sum(has_midext_unknown)})",
+        width=WIDTHS,
     )
-    ax["contra midext"].bar(
-        POSITIONS + SPACE/3.,
-        contra_has_midext_unknown[LABELS],
-        label=f"clearly lateralized ({num_has_midext_unknown})",
-        width=WIDTHS
-    )
-    ax["contra midext"].set_xticks(POSITIONS - SPACE/2.)
+    ax["contra midext"].set_xticks(POSITIONS)
     ax["contra midext"].set_xticklabels(LABELS)
     ax["contra midext"].grid(axis='x')
     ax["contra midext"].set_ylabel("contralateral involvement [%]")
     ax["contra midext"].legend()
 
-    num_ipsiIII = (max_llh_data["ipsi", "III"] == True).sum()
-    num_noipsiIII = (max_llh_data["ipsi", "III"] != True).sum()
+    has_ipsi_I = max_llh_data["ipsi", "I"] == True
 
-    contra_ipsiIII = (100 / num_ipsiIII) * (
-        max_llh_data["contra"] == True
-    ).loc[
-        max_llh_data["ipsi", "III"] == True
-    ].sum()
-
-    contra_noipsiIII = (100 / num_noipsiIII) * (
-        max_llh_data["contra"] == True
-    ).loc[
-        max_llh_data["ipsi", "III"] != True
-    ].sum()
-
-    ax["contra ipsiIII"].bar(
+    ax["contra ipsiI"].bar(
         POSITIONS,
-        contra_ipsiIII[LABELS],
-        label=f"with involvement in LNL III ({num_ipsiIII})",
-        width=WIDTHS
+        get_prevalence(max_llh_data["contra"], has_ipsi_I, lnls=LABELS),
+        label=f"with involvement in LNL I ({sum(has_ipsi_I)})",
+        width=WIDTHS,
     )
-    ax["contra ipsiIII"].bar(
+    ax["contra ipsiI"].bar(
         POSITIONS - SPACE/2.,
-        contra_noipsiIII[LABELS],
-        label=f"without involvement in LNL III ({num_noipsiIII})",
-        width=WIDTHS
+        get_prevalence(max_llh_data["contra"], ~has_ipsi_I, lnls=LABELS),
+        label=f"without involvement in LNL I ({sum(~has_ipsi_I)})",
+        width=WIDTHS,
     )
-    ax["contra ipsiIII"].set_xticks(POSITIONS - SPACE/2.)
-    ax["contra ipsiIII"].set_xticklabels(LABELS)
-    ax["contra ipsiIII"].grid(axis='x')
-    ax["contra ipsiIII"].legend()
-    plt.setp(ax["contra ipsiIII"].get_yticklabels(), visible=False)
+    ax["contra ipsiI"].set_xticks(POSITIONS - SPACE/2.)
+    ax["contra ipsiI"].set_xticklabels(LABELS)
+    ax["contra ipsiI"].grid(axis='x')
+    ax["contra ipsiI"].legend()
+    plt.setp(ax["contra ipsiI"].get_yticklabels(), visible=False)
 
     # third row, involvement by subsite
-    idx = 0
-    axes = ax["first_subsites"]
-    for i, (subsite, icd_list) in enumerate(ORAL_CAVITY_ICD_CODES.items()):
-        if subsite in ["parotid gland", "other salivary glands"]:
-            continue
+    ax["subsites: tongue, gums, cheek"].bar(
+        POSITIONS,
+        get_prevalence(
+            max_llh_data["ipsi"],
+            subsites.isin(ORAL_CAVITY_ICD_CODES["tongue"]),
+            lnls=LABELS,
+        ),
+        label=f"tongue ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['tongue']))})",
+        width=WIDTHS,
+    )
+    ax["subsites: tongue, gums, cheek"].bar(
+        POSITIONS - SPACE/2.,
+        get_prevalence(
+            max_llh_data["ipsi"],
+            subsites.isin(ORAL_CAVITY_ICD_CODES["gums and cheeks"]),
+            lnls=LABELS,
+        ),
+        label=f"gums and cheek ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['gums and cheeks']))})",
+        width=WIDTHS,
+    )
 
-        if i == 3:
-            idx = 0
-            axes = ax["last_subsites"]
+    ax["subsites: floor of mouth, palate"].bar(
+        POSITIONS,
+        get_prevalence(
+            max_llh_data["ipsi"],
+            subsites.isin(ORAL_CAVITY_ICD_CODES["palate"]),
+            lnls=LABELS,
+        ),
+        label=f"palate ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['palate']))})",
+        width=WIDTHS,
+    )
+    ax["subsites: floor of mouth, palate"].bar(
+        POSITIONS - SPACE/2.,
+        get_prevalence(
+            max_llh_data["ipsi"],
+            subsites.isin(ORAL_CAVITY_ICD_CODES["floor of mouth"]),
+            lnls=LABELS,
+        ),
+        label=f"floor of mouth ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['floor of mouth']))})",
+        width=WIDTHS,
+    )
 
-        is_subsite = dataset["tumor", "1", "subsite"].isin(icd_list)
-        total = sum(is_subsite)
-        frequency = 100. * max_llh_data.loc[is_subsite]["ipsi"].sum() / total
-        axes.bar(
-            POSITIONS + (idx - 2) * SPACE/3.,
-            frequency[LABELS],
-            label=f"{subsite} ({total})",
-            width=0.8 * WIDTHS,
-            zorder=5-idx,
-        )
-        idx += 1
+    ax["subsites: tongue, gums, cheek"].set_xticks(POSITIONS - SPACE/2.)
+    ax["subsites: tongue, gums, cheek"].set_xticklabels(LABELS)
+    ax["subsites: tongue, gums, cheek"].grid(axis='x')
+    ax["subsites: tongue, gums, cheek"].set_ylabel("subsite involvement [%]")
+    ax["subsites: tongue, gums, cheek"].legend()
 
-    ax["first_subsites"].set_xticks(POSITIONS - SPACE/2.)
-    ax["first_subsites"].set_xticklabels(LABELS)
-    ax["first_subsites"].grid(axis='x')
-    ax["first_subsites"].set_ylabel("subsite involvement [%]")
-    ax["first_subsites"].legend()
-
-    ax["last_subsites"].set_xticks(POSITIONS - SPACE/2.)
-    ax["last_subsites"].set_xticklabels(LABELS)
-    ax["last_subsites"].grid(axis='x')
-    ax["last_subsites"].legend()
+    ax["subsites: floor of mouth, palate"].set_xticks(POSITIONS - SPACE/2.)
+    ax["subsites: floor of mouth, palate"].set_xticklabels(LABELS)
+    ax["subsites: floor of mouth, palate"].grid(axis='x')
+    ax["subsites: floor of mouth, palate"].legend()
 
     # labelling the six subplots
     ax["prevalence contra"].annotate("a)", (0.04, 0.92), xycoords="axes fraction")
     ax["prevalence ipsi"].annotate("b)", (0.96, 0.92), xycoords="axes fraction", horizontalalignment="right")
     ax["contra midext"].annotate("c)", (0.04, 0.92), xycoords="axes fraction")
-    ax["contra ipsiIII"].annotate("d)", (0.04, 0.92), xycoords="axes fraction")
-    ax["first_subsites"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
-    ax["last_subsites"].annotate("f)", (0.04, 0.92), xycoords="axes fraction")
+    ax["contra ipsiI"].annotate("d)", (0.04, 0.92), xycoords="axes fraction")
+    ax["subsites: tongue, gums, cheek"].annotate("e)", (0.04, 0.92), xycoords="axes fraction")
+    ax["subsites: floor of mouth, palate"].annotate("f)", (0.04, 0.92), xycoords="axes fraction")
 
     plt.savefig(OUTPUT_DIR / OUTPUT_NAME)
