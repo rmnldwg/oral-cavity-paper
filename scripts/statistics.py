@@ -2,7 +2,6 @@
 Plot panel with patient cohort statistics for the joined CLB & ISB dataset.
 """
 # pylint: disable=singleton-comparison
-from cProfile import label
 from pathlib import Path
 from typing import List
 

@@ -50,13 +50,13 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: 49e832b6c15837f4322b2619bcb28674
+      md5: 9520156490dcf2ff137d9ac4e94dce8f
       size: 458572
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 49e832b6c15837f4322b2619bcb28674
+      md5: 9520156490dcf2ff137d9ac4e94dce8f
       size: 458572
     - path: scripts/statistics.py
       md5: fb1b24c4b549f07f1662b21e6bdcd60c
@@ -66,9 +66,12 @@ stages:
       md5: b14a065a879f39a4aa9f3ea971d4a2ee
       size: 223598
   copy:
-    cmd: "cp figures/statistics.png /home/rmnldwg/OneDrive_USZ/50-59\\ Research/53\\\
-      \ Lymphatic\\ Progression/53.24\\ Paper\\ Oral\\ Cavity\\ Dataset/figures/statistics.png\n"
+    cmd: "bash copy.sh\n"
     deps:
-    - path: figures/statistics.png
-      md5: b14a065a879f39a4aa9f3ea971d4a2ee
-      size: 223598
+    - path: copy.sh
+      md5: d7fce89ba5c06fe576faab672140ed75
+      size: 643
+    - path: figures
+      md5: 39347bbcce1ce3537d65f5807db2d90f.dir
+      size: 223614
+      nfiles: 2
