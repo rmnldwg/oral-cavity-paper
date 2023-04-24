@@ -7,10 +7,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from statistics import ORAL_CAVITY_ICD_CODES, DATAFILE
+from utils import ORAL_CAVITY_ICD_CODES, DATAFILE, TABLES_DIR
 
 
-OUTPUT_DIR = Path("tables")
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 
 LNLS = ["I", "II", "III", "IV", "V"]
@@ -62,4 +61,4 @@ if __name__ == "__main__":
         for lnl in LNLS:
             data.loc[key_tuple, lnl] = subset["contra", lnl].sum()
 
-    data.to_csv(OUTPUT_DIR / OUTPUT_NAME)
+    data.to_csv(TABLES_DIR / OUTPUT_NAME)
