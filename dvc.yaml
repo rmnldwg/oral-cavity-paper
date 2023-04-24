@@ -32,35 +32,30 @@ stages:
     outs:
       - ${output}
 
-  statistics:
-    desc: Plot some interesting cohort statistics regarding involvement patterns.
-    vars:
-      - input: data/enhanced.csv
-      - script: scripts/statistics.py
-      - output: figures/statistics.png
-    cmd: >
-      .venv/bin/python ${script}
-    deps:
-      - ${input}
-      - ${script}
-    outs:
-      - ${output}
+  figures:
+    foreach:
+      - statistics
+      - venn_diagram
+    do:
+      deps:
+        - data/enhanced.csv
+        - scripts/${item}.py
+      cmd: >
+        .venv/bin/python scripts/${item}.py
+      outs:
+        - figures/${item}.png
 
-  contra-involvement-table:
-    desc: |
-      Create table showing contralateral involvement by LNL stratified by the variables
-      T-Category, midline extension, and ipsilateral involvement.
-    vars:
-      - input: data/enhanced.csv
-      - script: scripts/contra_involvement.py
-      - output: tables/contra_involvement.csv
-    cmd: >
-      .venv/bin/python ${script}
-    deps:
-      - ${input}
-      - ${script}
-    outs:
-      - ${output}
+  tables:
+    foreach:
+      - contra_involvement
+    do:
+      deps:
+        - data/enhanced.csv
+        - scripts/${item}.py
+      cmd: >
+        .venv/bin/python scripts/${item}.py
+      outs:
+        - tables/${item}.csv
 
   copy:
     desc:

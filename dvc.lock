@@ -72,9 +72,9 @@ stages:
       md5: 8f2f11ed8419c435154e665ba6f6d00a
       size: 794
     - path: figures
-      md5: 9c0322af13d4f3a382a8cdc94c8061ef.dir
-      size: 224173
-      nfiles: 2
+      md5: ec2def2a96783bec23e534edfdbf5a4e.dir
+      size: 301471
+      nfiles: 3
     - path: tables
       md5: 89d8c7d2eff8dbf91b966710b824628d.dir
       size: 663
@@ -92,3 +92,42 @@ stages:
     - path: tables/contra_involvement.csv
       md5: 8b92ff1820277cf6247c7be0b271a4d7
       size: 639
+  tables@contra_involvement:
+    cmd: ".venv/bin/python scripts/contra_involvement.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/contra_involvement.py
+      md5: 6a369719f0b729e82bf223388ec1eeb8
+      size: 2116
+    outs:
+    - path: tables/contra_involvement.csv
+      md5: 8b92ff1820277cf6247c7be0b271a4d7
+      size: 639
+  figures@statistics:
+    cmd: ".venv/bin/python scripts/statistics.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/statistics.py
+      md5: fc53b4a142364b88da3ace48d55e2aeb
+      size: 11756
+    outs:
+    - path: figures/statistics.png
+      md5: 8ee419375b8fd843aa66d538dfae271b
+      size: 224157
+  figures@venn_diagram:
+    cmd: ".venv/bin/python scripts/venn_diagram.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/venn_diagram.py
+      md5: 4278e95cb4c1a59350ff69a425918ae1
+      size: 2581
+    outs:
+    - path: figures/venn_diagram.png
+      md5: 3f6e8fb6fdbab05a73a9f101d578a4b4
+      size: 77280
