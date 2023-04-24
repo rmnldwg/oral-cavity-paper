@@ -32,29 +32,38 @@ stages:
     outs:
       - ${output}
 
-  statistics:
-    desc: Plot some interesting cohort statistics regarding involvement patterns.
-    vars:
-      - input: data/enhanced.csv
-      - script: scripts/statistics.py
-      - output: figures/statistics.png
-    cmd: >
-      .venv/bin/python ${script}
-    deps:
-      - ${input}
-      - ${script}
-    outs:
-      - ${output}
+  figures:
+    foreach:
+      - statistics
+      - venn_diagram
+    do:
+      deps:
+        - data/enhanced.csv
+        - scripts/${item}.py
+      cmd: >
+        .venv/bin/python scripts/${item}.py
+      outs:
+        - figures/${item}.png
+
+  tables:
+    foreach:
+      - contra_involvement
+    do:
+      deps:
+        - data/enhanced.csv
+        - scripts/${item}.py
+      cmd: >
+        .venv/bin/python scripts/${item}.py
+      outs:
+        - tables/${item}.csv
 
   copy:
     desc:
-      Copy the plots over into the teams folder. The teams folder must be defined in an
-      environment variable named `FIGURES_OUTPUT_DIR`.
-    vars:
-      - input: figures
-      - script: copy.sh
+      Copy the plots and tables over into the teams folder. The teams folder must be
+      defined in an environment variable named `OUTPUT_DIR`.
     cmd: >
-      bash ${script}
+      bash copy.sh
     deps:
-      - ${input}
-      - ${script}
+      - figures
+      - tables
+      - copy.sh

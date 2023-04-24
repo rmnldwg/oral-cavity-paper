@@ -50,28 +50,84 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: 9520156490dcf2ff137d9ac4e94dce8f
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
       size: 458572
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 9520156490dcf2ff137d9ac4e94dce8f
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
       size: 458572
     - path: scripts/statistics.py
-      md5: fb1b24c4b549f07f1662b21e6bdcd60c
-      size: 11521
+      md5: fc53b4a142364b88da3ace48d55e2aeb
+      size: 11756
     outs:
     - path: figures/statistics.png
-      md5: b14a065a879f39a4aa9f3ea971d4a2ee
-      size: 223598
+      md5: 8ee419375b8fd843aa66d538dfae271b
+      size: 224157
   copy:
     cmd: "bash copy.sh\n"
     deps:
     - path: copy.sh
-      md5: d7fce89ba5c06fe576faab672140ed75
-      size: 643
+      md5: 8f2f11ed8419c435154e665ba6f6d00a
+      size: 794
     - path: figures
-      md5: 39347bbcce1ce3537d65f5807db2d90f.dir
-      size: 223614
+      md5: ec2def2a96783bec23e534edfdbf5a4e.dir
+      size: 301471
+      nfiles: 3
+    - path: tables
+      md5: 89d8c7d2eff8dbf91b966710b824628d.dir
+      size: 663
       nfiles: 2
+  contra-involvement-table:
+    cmd: ".venv/bin/python scripts/contra_involvement.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/contra_involvement.py
+      md5: 6a369719f0b729e82bf223388ec1eeb8
+      size: 2116
+    outs:
+    - path: tables/contra_involvement.csv
+      md5: 8b92ff1820277cf6247c7be0b271a4d7
+      size: 639
+  tables@contra_involvement:
+    cmd: ".venv/bin/python scripts/contra_involvement.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/contra_involvement.py
+      md5: d376f60aafead257a3bdcb9c44de803d
+      size: 2095
+    outs:
+    - path: tables/contra_involvement.csv
+      md5: 8b92ff1820277cf6247c7be0b271a4d7
+      size: 639
+  figures@statistics:
+    cmd: ".venv/bin/python scripts/statistics.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/statistics.py
+      md5: 14e7bc4670b4be2e5cb0940868ccde3d
+      size: 11148
+    outs:
+    - path: figures/statistics.png
+      md5: 8ee419375b8fd843aa66d538dfae271b
+      size: 224157
+  figures@venn_diagram:
+    cmd: ".venv/bin/python scripts/venn_diagram.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: c11857f2f4ebfa770ee2ff5628d69f0d
+      size: 458572
+    - path: scripts/venn_diagram.py
+      md5: 59ca81242b783ac262a564bdb134ef42
+      size: 1973
+    outs:
+    - path: figures/venn_diagram.png
+      md5: 3f6e8fb6fdbab05a73a9f101d578a4b4
+      size: 77280
