@@ -97,6 +97,12 @@ if __name__ == "__main__":
     has_midext_unknown = dataset["tumor", "1", "extension"].isna()
 
     max_llh_data = dataset["max_llh"]
+    cols_to_drop = []
+    for lnl in max_llh_data.columns.get_level_values(1):
+        if lnl not in LABELS:
+            cols_to_drop.append(("ipsi", lnl))
+            cols_to_drop.append(("contra", lnl))
+    max_llh_data = max_llh_data.drop(columns=cols_to_drop)
     is_n0 = max_llh_data.sum(axis=1) == 0
 
     num_total = len(max_llh_data)
@@ -230,7 +236,7 @@ if __name__ == "__main__":
     ax["contra ipsi"].bar(
         POSITIONS + SPACE/3.,
         get_prevalence(max_llh_data["contra"], has_ipsi_more, lnls=LABELS),
-        label=f"more than 2 ipsi LNLs ({sum(has_ipsi_more)})",
+        label=f"2 or more ipsi LNLs ({sum(has_ipsi_more)})",
         width=WIDTHS,
     )
     ax["contra ipsi"].bar(

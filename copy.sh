@@ -1,19 +1,24 @@
 #!/bin/bash
 
-# Copy files from the `figures` directory to a directory defined in the environment
-# variable `FIGURES_OUTPUT_DIR`.
+# Copy files from the `figures` and tables from the `tables` directory to a folder
+# defined in the environment variable `OUTPUT_DIR`.
 
-# If `FIGURES_OUTPUT_DIR` environment variable not defined, skip.
-if [ -z "${FIGURES_OUTPUT_DIR}" ]; then
-    echo "Environment variable FIGURES_OUTPUT_DIR is not defined. Skipping."
+# If `OUTPUT_DIR` environment variable not defined, skip.
+if [ -z "${OUTPUT_DIR}" ]; then
+    echo "Environment variable OUTPUT_DIR is not defined. Skipping."
     exit 0
 fi
 
-# The `FIGURES_OUTPUT_DIR` environment variable must be a directory.
-if [ ! -d "${FIGURES_OUTPUT_DIR}" ]; then
-    echo "Environment variable FIGURES_OUTPUT_DIR must be a directory."
+# The `OUTPUT_DIR` environment variable must be a directory.
+if [ ! -d "${OUTPUT_DIR}" ]; then
+    echo "Environment variable OUTPUT_DIR must be a directory."
     exit 1
 fi
 
-# Copy files from the `figures` directory to the `FIGURES_OUTPUT_DIR` directory.
-cp figures/* "$FIGURES_OUTPUT_DIR"
+# Create the `figures` and `tables` directories in the `OUTPUT_DIR` directory.
+mkdir -p "$OUTPUT_DIR/figures"
+mkdir -p "$OUTPUT_DIR/tables"
+
+# Copy files from the `figures` and `tables` directories to the `OUTPUT_DIR` directory.
+cp figures/* "$OUTPUT_DIR/figures"
+cp tables/* "$OUTPUT_DIR/tables"

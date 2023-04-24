@@ -46,15 +46,29 @@ stages:
     outs:
       - ${output}
 
-  copy:
-    desc:
-      Copy the plots over into the teams folder. The teams folder must be defined in an
-      environment variable named `FIGURES_OUTPUT_DIR`.
+  contra-involvement-table:
+    desc: |
+      Create table showing contralateral involvement by LNL stratified by the variables
+      T-Category, midline extension, and ipsilateral involvement.
     vars:
-      - input: figures
-      - script: copy.sh
+      - input: data/enhanced.csv
+      - script: scripts/contra_involvement.py
+      - output: tables/contra_involvement.csv
     cmd: >
-      bash ${script}
+      .venv/bin/python ${script}
     deps:
       - ${input}
       - ${script}
+    outs:
+      - ${output}
+
+  copy:
+    desc:
+      Copy the plots and tables over into the teams folder. The teams folder must be
+      defined in an environment variable named `OUTPUT_DIR`.
+    cmd: >
+      bash copy.sh
+    deps:
+      - figures
+      - tables
+      - copy.sh
