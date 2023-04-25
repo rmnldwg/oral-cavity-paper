@@ -48,6 +48,7 @@ stages:
   tables:
     foreach:
       - contra_involvement
+      - ece_data
     do:
       deps:
         - data/enhanced.csv

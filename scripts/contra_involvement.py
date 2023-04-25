@@ -7,7 +7,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from utils import ORAL_CAVITY_ICD_CODES, DATAFILE, TABLES_DIR
+from shared import (
+    DATAFILE,
+    TABLES_DIR,
+    load_and_prepare_data,
+)
 
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
@@ -16,20 +20,7 @@ LNLS = ["I", "II", "III", "IV", "V"]
 
 
 if __name__ == "__main__":
-    dataset = pd.read_csv(DATAFILE, header=[0,1,2])
-    is_oral_cavity = dataset["tumor", "1", "subsite"].isin(
-        icd for icd_list in ORAL_CAVITY_ICD_CODES.values() for icd in icd_list
-    )
-    dataset = dataset.loc[is_oral_cavity]
-    max_llh_data = dataset["max_llh"]
-
-    cols_to_drop = []
-    for lnl in max_llh_data.columns.get_level_values(1):
-        if lnl not in LNLS:
-            cols_to_drop.append(("ipsi", lnl))
-            cols_to_drop.append(("contra", lnl))
-
-    max_llh_data = max_llh_data.drop(columns=cols_to_drop)
+    dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LNLS)
 
     t_stage = {
         "early": dataset["tumor", "1", "t_stage"] <= 2,

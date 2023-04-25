@@ -12,7 +12,13 @@ from matplotlib_venn import venn3
 
 from lyscripts.plot.histograms import get_size
 
-from utils import DATAFILE, FIGURES_DIR, MPLSTYLE, COLORS, ORAL_CAVITY_ICD_CODES
+from shared import (
+    DATAFILE,
+    FIGURES_DIR,
+    MPLSTYLE,
+    COLORS,
+    load_and_prepare_data,
+)
 
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
@@ -23,11 +29,7 @@ if __name__ == "__main__":
     plt.rc("axes", prop_cycle=cycler(color=[COLORS["red"], COLORS["orange"], COLORS["green"]]))
     plt.rcParams['figure.constrained_layout.use'] = True
 
-    dataset = pd.read_csv(DATAFILE, header=[0,1,2])
-    is_oral_cavity = dataset["tumor", "1", "subsite"].isin(
-        icd for icd_list in ORAL_CAVITY_ICD_CODES.values() for icd in icd_list
-    )
-    dataset = dataset.loc[is_oral_cavity]
+    dataset, _ = load_and_prepare_data(filepath=DATAFILE, lnls=["I", "II", "III"])
 
     ipsi_data = dataset["max_llh", "ipsi"][["I", "II", "III"]]
 

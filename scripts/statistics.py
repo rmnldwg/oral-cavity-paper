@@ -13,7 +13,14 @@ from matplotlib import gridspec
 
 from lyscripts.plot.histograms import get_size
 
-from utils import DATAFILE, FIGURES_DIR, MPLSTYLE, COLORS, ORAL_CAVITY_ICD_CODES
+from shared import (
+    DATAFILE,
+    FIGURES_DIR,
+    MPLSTYLE,
+    COLORS,
+    ORAL_CAVITY_ICD_CODES,
+    load_and_prepare_data,
+)
 
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
@@ -58,11 +65,7 @@ if __name__ == "__main__":
     plt.rc("axes", prop_cycle=cycler(color=[COLORS["red"], COLORS["orange"], COLORS["green"]]))
     plt.rcParams['figure.constrained_layout.use'] = False
 
-    dataset = pd.read_csv(DATAFILE, header=[0,1,2])
-    is_oral_cavity = dataset["tumor", "1", "subsite"].isin(
-        icd for icd_list in ORAL_CAVITY_ICD_CODES.values() for icd in icd_list
-    )
-    dataset = dataset.loc[is_oral_cavity]
+    dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LABELS)
 
     t_stages = dataset["tumor", "1", "t_stage"]
     subsites = dataset["tumor", "1", "subsite"]
@@ -76,13 +79,6 @@ if __name__ == "__main__":
     has_not_midext = dataset["tumor", "1", "extension"] == False
     has_midext_unknown = dataset["tumor", "1", "extension"].isna()
 
-    max_llh_data = dataset["max_llh"]
-    cols_to_drop = []
-    for lnl in max_llh_data.columns.get_level_values(1):
-        if lnl not in LABELS:
-            cols_to_drop.append(("ipsi", lnl))
-            cols_to_drop.append(("contra", lnl))
-    max_llh_data = max_llh_data.drop(columns=cols_to_drop)
     is_n0 = max_llh_data.sum(axis=1) == 0
 
     num_total = len(max_llh_data)

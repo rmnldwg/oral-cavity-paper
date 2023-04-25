@@ -3,6 +3,9 @@ Some shared params, functions, and classes.
 """
 from pathlib import Path
 
+import pandas as pd
+
+
 DATAFILE = Path("./data/enhanced.csv")
 FIGURES_DIR = Path("./figures")
 TABLES_DIR = Path("./tables")
@@ -26,3 +29,22 @@ ORAL_CAVITY_ICD_CODES = {
     # "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",],
     # "salivary glands": ["C08", "C08.0", "C08.1", "C08.9",],
 }
+
+
+def load_and_prepare_data(filepath: Path | str, lnls: list[str]):
+    """Load data from `filepath` and prepare it for further analysis."""
+    dataset = pd.read_csv(Path(filepath), header=[0,1,2])
+    is_oral_cavity = dataset["tumor", "1", "subsite"].isin(
+        icd for icd_list in ORAL_CAVITY_ICD_CODES.values() for icd in icd_list
+    )
+    dataset = dataset.loc[is_oral_cavity]
+    max_llh_data = dataset["max_llh"]
+
+    cols_to_drop = []
+    for lnl in max_llh_data.columns.get_level_values(1):
+        if lnl not in lnls:
+            cols_to_drop.append(("ipsi", lnl))
+            cols_to_drop.append(("contra", lnl))
+
+    max_llh_data = max_llh_data.drop(columns=cols_to_drop)
+    return dataset, max_llh_data
