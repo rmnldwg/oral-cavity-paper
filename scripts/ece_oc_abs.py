@@ -102,7 +102,7 @@ for p in c.patches:
 plt.xticks(POSITIONS, LABELS)
 plt.xlabel("ipsilateral involvement (I-III)")
 plt.ylabel("number of patients")
-plt.legend(loc="upper left")
+plt.legend(loc="upper right")
 ax = plt.gca()
 ax.xaxis.grid(False)
 
