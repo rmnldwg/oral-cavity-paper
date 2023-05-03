@@ -41,7 +41,7 @@ COLORS = {
 import matplotlib.pyplot as plt
 import numpy as np
 
-data_raw = pd.read_csv("./data/lymph_nodes_invest_patincluded.csv", sep=";")
+data_raw = pd.read_csv("./data/lymph_nodes_invest_patincluded_OC.csv", sep=";")
 
 plot_data_pos = data_raw.iloc[:,[8,10,12,14,16,18,20,22,24,26,28]]
 plot_data_inv = data_raw.iloc[:,[7,9,11,13,15,17,19,21,23,25,27]]
@@ -68,17 +68,17 @@ b = ax2.bar(POSITIONS, 100*pd.array(plot_data_pos.sum())/pd.array(plot_data_inv.
 ax1.set_xticks(POSITIONS, LABELS)
 ax1.set_xlabel("lymph node level")
 ax1.set_ylim(0, 4000)
-ax1.set_yticks(np.arange(0, 4500, step=500))
+ax1.set_yticks(np.arange(0, 5000, step=500))
 ax1.set_ylabel("number of investigated lymph nodes", color="#00afa5")
 ax1.xaxis.grid(False)
 ax2.set_ylabel("positiv lymph nodes [%]", color="#ae0060")
-ax2.set_yticks(np.arange(0, 9, step=1))
+ax2.set_yticks(np.arange(0, 10, step=1))
 
 lines, labels = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax2.legend(lines + lines2, labels + labels2, loc=0)
 
-plt.savefig(OUTPUT_DIR / "lymph_invest_hist.png")
+plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
 
 
 #2D histogram with number of positive and investigated lymph 
@@ -110,4 +110,4 @@ for r in range(11):
               ax.text(hist[1][i+1] - 0.5, hist[2][j+1] - 0.5, int(bin_val),
                       ha='center', va='center', color='black', fontsize=6)
 
-  plt.savefig("./figures/lymph_invest_hist2d" + colname + ".png")
+  plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
