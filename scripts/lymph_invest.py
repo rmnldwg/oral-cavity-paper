@@ -8,6 +8,9 @@ from cycler import cycler
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib import colormaps
+from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.colors import ListedColormap
+from matplotlib.colors import Colormap
 
 from lyscripts.plot.histograms import get_size
 
@@ -29,13 +32,30 @@ for i, width in enumerate(WIDTHS):
     widths = sum(WIDTHS[:np.maximum(0,i)]) + width/2
     POSITIONS[i] = spaces + widths
 
-COLORS = {
-    "green": '#00afa5',
-    "red": '#ae0060',
-    "blue": '#005ea8',
-    "orange": '#f17900',
-    "gray": '#c5d5db',
-}
+# USZ colors
+usz_blue = '#005ea8'
+usz_green = '#00afa5'
+usz_red = '#ae0060'
+usz_orange = '#f17900'
+usz_gray = '#c5d5db'
+
+# colormaps
+white_to_blue  = LinearSegmentedColormap.from_list("white_to_blue", 
+                                                   ["#ffffff", usz_blue], 
+                                                   N=256)
+white_to_green = LinearSegmentedColormap.from_list("white_to_green", 
+                                                   ["#ffffff", usz_green], 
+                                                   N=256)
+green_to_red   = LinearSegmentedColormap.from_list("green_to_red", 
+                                                   [usz_green, usz_red], 
+                                                   N=256)
+
+h = usz_gray.lstrip('#')
+gray_rgba = tuple(int(h[i:i+2], 16) / 255. for i in (0, 2, 4)) + (1.0,)
+tmp = LinearSegmentedColormap.from_list("tmp", [usz_green, usz_red], N=128)
+tmp = tmp(np.linspace(0., 1., 128))
+tmp = np.vstack([np.array([gray_rgba]*128), tmp])
+halfGray_halfGreenToRed = ListedColormap(tmp)
 
 
 import matplotlib.pyplot as plt
@@ -90,7 +110,7 @@ for r in range(11):
   fig, ax = plt.subplots()
 
     # instantiate a second axes that shares the same x-axis
-  hist = ax.hist2d(data.iloc[:,0], data.iloc[:,1], range=[(min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5),(min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5)], bins=(1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), 1+int(max(data.iloc[:,1])-min(data.iloc[:,1]))), cmap=colormaps['Reds'])
+  hist = ax.hist2d(data.iloc[:,0], data.iloc[:,1], range=[(min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5),(min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5)], bins=(1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), 1+int(max(data.iloc[:,1])-min(data.iloc[:,1]))), cmap=green_to_red)
   
   if max(data.iloc[:,0])<11:
     plt.xticks(np.arange(min(data.iloc[:,0]), 1+max(data.iloc[:,0])))
@@ -108,6 +128,6 @@ for r in range(11):
           bin_val = hist[0][i][j]
           if bin_val > 0:
               ax.text(hist[1][i+1] - 0.5, hist[2][j+1] - 0.5, int(bin_val),
-                      ha='center', va='center', color='black', fontsize=6)
+                      ha='center', va='center', color='white', fontsize='x-small')
 
   plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
