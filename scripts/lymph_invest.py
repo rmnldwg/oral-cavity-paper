@@ -10,7 +10,7 @@ from matplotlib import gridspec
 from matplotlib import colormaps
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.colors import ListedColormap
-from matplotlib.colors import Colormap
+from matplotlib.gridspec import GridSpec
 
 from lyscripts.plot.histograms import get_size
 
@@ -21,8 +21,8 @@ MPLSTYLE = Path("./scripts/.mplstyle")
 
 # barplot settings
 WIDTH, SPACE = 0.8, 0.6
-LABELS  = ["Ia","Ib ipsi","Ib contra", "II ipsi", "II contra", "III ipsi", "III contra", "IV ipsi", "IV contra", "V ipsi", "V contra"]
-WIDTHS  = np.array([WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH])
+LABELS  = ["Ia ipsi", "Ia", "Ib ipsi", "Ib contra", "II ipsi", "II contra", "III ipsi", "III contra", "IV ipsi", "IV contra", "V ipsi", "V contra"]
+WIDTHS  = np.array([WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH])
 
 # compute positions of bar centers based on WIDTHS and SPACE, such that the space
 # between neighboring bars is SPACE. The first bar is centered at SPACE/2 + WIDTH/2.
@@ -57,14 +57,40 @@ tmp = tmp(np.linspace(0., 1., 128))
 tmp = np.vstack([np.array([gray_rgba]*128), tmp])
 halfGray_halfGreenToRed = ListedColormap(tmp)
 
+def set_size(width="single", unit="cm", ratio="golden"):
+    if width == "single":
+        width = 10
+    elif width == "full":
+        width = 16
+    else:
+        try:
+            width = width
+        except:
+            width = 10
+            
+    if unit == "cm":
+        width = width / 2.54
+        
+    if ratio == "golden":
+        ratio = 1.618
+    else:
+        ratio = ratio
+    
+    try:
+        height = width / ratio
+    except:
+        height = width / 1.618
+        
+    return (width, height)
+
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-data_raw = pd.read_csv("./data/lymph_nodes_invest_patincluded_OC.csv", sep=";")
+data_raw = pd.read_csv("./data/lymph_nodes_invest_all.csv", sep=";")
 
-plot_data_pos = data_raw.iloc[:,[8,10,12,14,16,18,20,22,24,26,28]]
-plot_data_inv = data_raw.iloc[:,[7,9,11,13,15,17,19,21,23,25,27]]
+plot_data_pos = data_raw.iloc[:,[3,5,7,9,11,13,15,17,19,21,23,25]]
+plot_data_inv = data_raw.iloc[:,[2,4,6,8,10,12,14,16,18,20,22,24]]
 
 plt.style.use(MPLSTYLE)
 
@@ -78,7 +104,7 @@ plt.legend()$
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
   # instantiate a second axes that shares the same x-axis
-a = ax1.bar(POSITIONS + SPACE/3, plot_data_inv.sum(), color="#00afa5", width=WIDTHS, label="lymph nodes investigated")
+a = ax1.bar(POSITIONS + SPACE/3, plot_data_inv.sum(), color="#00afa5", width=WIDTHS, label= "lymph nodes investigated")
 
 ax2 = ax1.twinx()
 
@@ -88,40 +114,48 @@ b = ax2.bar(POSITIONS, 100*pd.array(plot_data_pos.sum())/pd.array(plot_data_inv.
 ax1.set_xticks(POSITIONS, LABELS)
 ax1.set_xlabel("lymph node level")
 ax1.set_ylim(0, 4000)
-ax1.set_yticks(np.arange(0, 5000, step=500))
+ax1.set_yticks(np.arange(0, 8800, step=800))
 ax1.set_ylabel("number of investigated lymph nodes", color="#00afa5")
 ax1.xaxis.grid(False)
 ax2.set_ylabel("positiv lymph nodes [%]", color="#ae0060")
-ax2.set_yticks(np.arange(0, 10, step=1))
+ax2.set_yticks(np.arange(0, 11, step=1))
 
 lines, labels = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax2.legend(lines + lines2, labels + labels2, loc=0)
 
-plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
+plt.savefig(OUTPUT_DIR / "lymph_invest_hist_all.png")
 
 
 #2D histogram with number of positive and investigated lymph 
-colnames = ["Ia", "Ib ipsi", "Ib contra", "II ipsi", "II contra", "III ipsi", "III contra", "IV ipsi", "IV contra", "V ipsi", "V contra"]
+colnames = ["Ia ipsi", "Ia", "Ib ipsi", "Ib contra", "II ipsi", "II contra", "III ipsi", "III contra", "IV ipsi", "IV contra", "V ipsi", "V contra"]
 
-for r in range(11):
-  data = data_raw.iloc[:,[7+2*r,8+2*r]].dropna()
+for r in range(12):
+  data = data_raw.iloc[:,[2+2*r,3+2*r]].dropna()
   colname = colnames[r]
-  fig, ax = plt.subplots()
+
+  fig = plt.figure(figsize=set_size(width="full", ratio=1.8), 
+                 constrained_layout=True)
+  spec = GridSpec(ncols=2, nrows=2, figure=fig, 
+                   width_ratios=[1., 0.16], height_ratios=[1., 0.37])
+
+  ax = fig.add_subplot(spec[0,0])
 
     # instantiate a second axes that shares the same x-axis
-  hist = ax.hist2d(data.iloc[:,0], data.iloc[:,1], range=[(min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5),(min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5)], bins=(1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), 1+int(max(data.iloc[:,1])-min(data.iloc[:,1]))), cmap=green_to_red)
-  
-  if max(data.iloc[:,0])<11:
-    plt.xticks(np.arange(min(data.iloc[:,0]), 1+max(data.iloc[:,0])))
-    plt.yticks(np.arange(min(data.iloc[:,1]), 1+max(data.iloc[:,1])))
+  hist = plt.hist2d(data.iloc[:,0], data.iloc[:,1], range=[(min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5),(min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5)], bins=(1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), 1+int(max(data.iloc[:,1])-min(data.iloc[:,1]))), cmap=green_to_red)
+  plt.title(colname + " (n=" + str(len(data)) + ")")
 
-  if max(data.iloc[:,0])>=11:
+  if max(data.iloc[:,0])<11:
+    plt.xticks(np.arange(min(data.iloc[:,0]), 1+max(data.iloc[:,0]), 1))
+
+  else:
     plt.xticks(np.arange(min(data.iloc[:,0]), 1+max(data.iloc[:,0]), 2))
-    plt.yticks(np.arange(min(data.iloc[:,1]), 1+max(data.iloc[:,1]), 2))
+
+  plt.yticks(np.arange(min(data.iloc[:,1]), 1+max(data.iloc[:,1]), 1))
     
-  plt.xlabel("number of lymph nodes investigated")
-  plt.ylabel("number of positive lymph nodes")
+  ax.set_xlabel("number of lymph nodes investigated")
+  ax.set_ylabel("number of positive lymph nodes")
+
 
   for i in range(len(hist[0])):
       for j in range(len(hist[0][i])):
@@ -129,5 +163,13 @@ for r in range(11):
           if bin_val > 0:
               ax.text(hist[1][i+1] - 0.5, hist[2][j+1] - 0.5, int(bin_val),
                       ha='center', va='center', color='white', fontsize='x-small')
+  
+  ax2 = fig.add_subplot(spec[0,1], sharey=ax)
+  ax2.hist(data.iloc[:,1], orientation="horizontal", bins = 1+int(max(data.iloc[:,1])-min(data.iloc[:,1])), range=[min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5], color="#c5d5db")
+  plt.setp(ax2.get_yticklabels(), visible=False);
 
-  plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
+  ax3 = fig.add_subplot(spec[1,0], sharex=ax)
+  ax3.hist(data.iloc[:,0], bins = 1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), range=[min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5], color="#c5d5db")
+  plt.setp(ax3.get_xticklabels(), visible=False);
+
+  plt.savefig("./figures/lymph_invest_hist2d" + colname + "_all.png")
