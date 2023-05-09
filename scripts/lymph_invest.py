@@ -87,7 +87,7 @@ def set_size(width="single", unit="cm", ratio="golden"):
 import matplotlib.pyplot as plt
 import numpy as np
 
-data_raw = pd.read_csv("./data/lymph_nodes_invest_all.csv", sep=";")
+data_raw = pd.read_csv("./data/lymph_nodes_invest_OC.csv", sep=";")
 
 plot_data_pos = data_raw.iloc[:,[3,5,7,9,11,13,15,17,19,21,23,25]]
 plot_data_inv = data_raw.iloc[:,[2,4,6,8,10,12,14,16,18,20,22,24]]
@@ -124,7 +124,7 @@ lines, labels = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax2.legend(lines + lines2, labels + labels2, loc=0)
 
-plt.savefig(OUTPUT_DIR / "lymph_invest_hist_all.png")
+plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
 
 
 #2D histogram with number of positive and investigated lymph 
@@ -172,4 +172,4 @@ for r in range(12):
   ax3.hist(data.iloc[:,0], bins = 1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), range=[min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5], color="#c5d5db")
   plt.setp(ax3.get_xticklabels(), visible=False);
 
-  plt.savefig("./figures/lymph_invest_hist2d" + colname + "_all.png")
+  plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
