@@ -18,16 +18,18 @@ usz_gray = '#c5d5db'
 
 plt.style.use(MPLSTYLE)
 
-reg_data_raw = pd.read_csv("./data/lymph_nodes_invest_OC.csv", sep=";")
-reg_data = reg_data_raw.iloc[:,[-6,-2,-1]].dropna()
-classification_data = reg_data_raw.iloc[:,-1].dropna()
+# barplot settings
+WIDTH, SPACE = 0.8, 0.6
+LABELS  = ['[0,10[', '[10,20[', '[20,30[', '[30,40[', '[40,50[', '50+']
+WIDTHS  = np.array([WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH])
 
-# Create the table data
-data = {
-    '': ['Clinically Positive', 'Clinically Negative'],
-    'Pathology Positive': [sum(classification_data=="tp"), sum(classification_data=="fn")],
-    'Pathology Negative': [sum(classification_data=="fp"), sum(classification_data=="tn")]
-}
+# compute positions of bar centers based on WIDTHS and SPACE, such that the space
+# between neighboring bars is SPACE. The first bar is centered at SPACE/2 + WIDTH/2.
+POSITIONS = np.zeros_like(WIDTHS)
+for i, width in enumerate(WIDTHS):
+    spaces = (0.5 + i) * SPACE
+    widths = sum(WIDTHS[:np.maximum(0,i)]) + width/2
+    POSITIONS[i] = spaces + widths
 
 def set_size(width="single", unit="cm", ratio="golden"):
     if width == "single":
@@ -55,57 +57,78 @@ def set_size(width="single", unit="cm", ratio="golden"):
         
     return (width, height)
 
+reg_data_raw = pd.read_csv("./data/lymph_nodes_invest_OC.csv", sep=";")
+reg_data = reg_data_raw.iloc[:,[-6,-2,-1]].dropna()
+classification_data = reg_data_raw.iloc[:,-1].dropna()
+
+reg_data.iloc[:,0]
+
+# Histogram with largest lymph node on x axis and fn and tp on y axis and confusion matrix as a table
+data = {
+    '': ['Clinically Positive', 'Clinically Negative'],
+    'Pathology Positive': [sum(classification_data=="tp"), sum(classification_data=="fn")],
+    'Pathology Negative': [sum(classification_data=="fp"), sum(classification_data=="tn")]
+}
+
+conditions = [
+    reg_data.iloc[:,0] < 10,
+    (reg_data.iloc[:,0] < 20) & (reg_data.iloc[:,0] >=10),
+    (reg_data.iloc[:,0] < 30) & (reg_data.iloc[:,0] >=20),
+    (reg_data.iloc[:,0] < 40) & (reg_data.iloc[:,0] >=30),
+    (reg_data.iloc[:,0] < 50) & (reg_data.iloc[:,0] >=40),
+    reg_data.iloc[:,0] >= 50,
+]
+values = ['[0,10[', '[10,20[', '[20,30[', '[30,40[', '[40,50[', '50+']
+
+reg_data['size_category'] = pd.np.select(conditions, values, default='Unknown')
+reg_data['size_category'] = pd.Categorical(reg_data['size_category'], ['[0,10[', '[10,20[', '[20,30[', '[30,40[', '[40,50[', '50+'])
+
+hist_data1 = pd.DataFrame()
+hist_data2 = pd.DataFrame()
+hist_data3 = pd.DataFrame()
+hist_data4 = pd.DataFrame()
+hist_data5 = pd.DataFrame()
+hist_data6 = pd.DataFrame()
+
+hist_data1['0-10'] = reg_data[reg_data['size_category']=='[0,10['].iloc[:,2]
+hist_data2['10-20'] = reg_data[reg_data['size_category']=='[10,20['].iloc[:,2]
+hist_data3['20-30'] = reg_data[reg_data['size_category']=='[20,30['].iloc[:,2]
+hist_data4['30-40'] = reg_data[reg_data['size_category']=='[30,40['].iloc[:,2]
+hist_data5['40-50'] = reg_data[reg_data['size_category']=='[40,50['].iloc[:,2]
+hist_data6['50+'] = reg_data[reg_data['size_category']=='50+'].iloc[:,2]
+
+hist_data = pd.concat([hist_data1, hist_data2, hist_data3, hist_data4, hist_data5, hist_data6])
 
 fig = plt.figure(figsize=set_size(width="full", ratio="golden"), 
                  constrained_layout=True)
 ax = fig.add_subplot()
 
-sns.set_context(rc = {'patch.linewidth': 0.0})
-sns.histplot(x=reg_data.iloc[:,0], hue=reg_data.iloc[:,2], multiple="stack", palette=[usz_orange, usz_red, usz_green], alpha=1)
-plt.xlabel("size largest lymph node [mm]")
-plt.ylabel("count")
-sns.set_context(rc = {'patch.linewidth': 0.75})
-plt.legend(title="", labels=['tn (' +str(sum(reg_data.iloc[:,2]=="tn")) + ")", 'fn (' +str(sum(reg_data.iloc[:,2]=="fn")) + ")", 'tp (' +str(sum(reg_data.iloc[:,2]=="tp")) + ")"])
+hist_tp = hist_data=="tp"
+hist_fn = hist_data=="fn"
 
-labels1 = [str(v) if v else '' for v in ax.containers[-1].datavalues.astype('int')]
-ax.bar_label(ax.containers[-1], labels=labels1, label_type="center", size="x-small")
-labels2 = [str(v) if v else '' for v in ax.containers[-2].datavalues.astype('int')]
-ax.bar_label(ax.containers[-2], labels=labels2, label_type="center", size="x-small")
-labels3 = [str(v) if v else '' for v in ax.containers[-3].datavalues.astype('int')]
-ax.bar_label(ax.containers[-3], labels=labels3, label_type="center", size="x-small")
+plt.bar(
+        POSITIONS + SPACE/2.,
+        hist_fn.sum(),
+        label='false negative (' +str(sum(reg_data.iloc[:,2]=="fn")) + ")",
+        width=WIDTHS,
+        color=usz_red
+    )
+plt.bar(
+        POSITIONS,
+        hist_tp.sum(),
+        label='true positive (' +str(sum(reg_data.iloc[:,2]=="tp")) + ")",
+        width=WIDTHS,
+        color=usz_green
+    )
+
+ax.set_xticks(POSITIONS)
+ax.set_xticklabels(LABELS)
+ax.grid(axis='x')
+ax.set_ylabel("count")
+ax.set_xlabel("largest lymph node [mm]")
+ax.legend()
 
 plt.savefig('./figures/confusionmat_lymphsize_hist.png')
-
-
-"""# Assuming reg_data is your DataFrame
-fig, ax = plt.subplots()
-
-# Select the data for the histogram
-x_data = reg_data.iloc[:, 0]
-categories = reg_data.iloc[:, 2].unique()
-
-# Increase the bandwidth by adjusting the bins parameter
-bins = 10  # Adjust the bins value as needed
-
-# Plot the histogram for each category
-for category in categories:
-    # Filter data for the current category
-    filtered_data = x_data[reg_data.iloc[:, 2] == category]
-    
-    # Plot histogram for the current category
-    ax.hist(filtered_data, bins=bins, label=category, stacked=True, alpha=0.6)
-
-# Set labels and title
-ax.set_xlabel('X Label')
-ax.set_ylabel('Frequency')
-ax.set_title('Stacked Histogram')
-
-# Add a legend
-ax.legend()
-"""
-# Display the plot
-#plt.show()
-
 
 
 # Create the DataFrame
@@ -156,4 +179,3 @@ plt.ylabel('True Positive Rate')
 plt.title('Receiver operating characteristic')
 plt.legend(loc="lower right")
 plt.savefig('Log_ROC')
-plt.show()
