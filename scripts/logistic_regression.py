@@ -29,8 +29,52 @@ data = {
     'Pathology Negative': [sum(classification_data=="fp"), sum(classification_data=="tn")]
 }
 
-sns.histplot(x=reg_data.iloc[:,0], hue=reg_data.iloc[:,2], multiple="stack", palette=[usz_orange, usz_red, usz_green], alpha=0.6)
+def set_size(width="single", unit="cm", ratio="golden"):
+    if width == "single":
+        width = 10
+    elif width == "full":
+        width = 16
+    else:
+        try:
+            width = width
+        except:
+            width = 10
+            
+    if unit == "cm":
+        width = width / 2.54
+        
+    if ratio == "golden":
+        ratio = 1.618
+    else:
+        ratio = ratio
+    
+    try:
+        height = width / ratio
+    except:
+        height = width / 1.618
+        
+    return (width, height)
 
+
+fig = plt.figure(figsize=set_size(width="full", ratio="golden"), 
+                 constrained_layout=True)
+ax = fig.add_subplot()
+
+sns.set_context(rc = {'patch.linewidth': 0.0})
+sns.histplot(x=reg_data.iloc[:,0], hue=reg_data.iloc[:,2], multiple="stack", palette=[usz_orange, usz_red, usz_green], alpha=1)
+plt.xlabel("size largest lymph node [mm]")
+plt.ylabel("count")
+sns.set_context(rc = {'patch.linewidth': 0.75})
+plt.legend(title="", labels=['tn (' +str(sum(reg_data.iloc[:,2]=="tn")) + ")", 'fn (' +str(sum(reg_data.iloc[:,2]=="fn")) + ")", 'tp (' +str(sum(reg_data.iloc[:,2]=="tp")) + ")"])
+
+labels1 = [str(v) if v else '' for v in ax.containers[-1].datavalues.astype('int')]
+ax.bar_label(ax.containers[-1], labels=labels1, label_type="center", size="x-small")
+labels2 = [str(v) if v else '' for v in ax.containers[-2].datavalues.astype('int')]
+ax.bar_label(ax.containers[-2], labels=labels2, label_type="center", size="x-small")
+labels3 = [str(v) if v else '' for v in ax.containers[-3].datavalues.astype('int')]
+ax.bar_label(ax.containers[-3], labels=labels3, label_type="center", size="x-small")
+
+plt.savefig('./figures/confusionmat_lymphsize_hist.png')
 
 
 """# Assuming reg_data is your DataFrame
@@ -73,7 +117,7 @@ ax.axis('off')
 table = ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, cellLoc='center', loc='center', colWidths=[0.2, 0.2, 0.2])
 
 # Save the table as a PNG
-plt.savefig('./figures/table_errors.png')
+plt.savefig('./figures/confusion_matrix.png')
 
 
 #logistic regression
