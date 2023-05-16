@@ -173,3 +173,57 @@ for r in range(12):
   plt.setp(ax3.get_xticklabels(), visible=False);
 
   plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
+
+
+#influence of number of positive lymph node levels in level 2 on the percentage of involved patients in level 3
+ipsiII_pos = data_raw.iloc[:,[3+2*4]].fillna(0)
+ipsiIII_involved = data_raw.iloc[:,[3+2*6]].fillna(0)
+contraIII_involved = data_raw.iloc[:,[3+2*7]].fillna(0)
+III_involved = (ipsiIII_involved['3 ipsi pos'] + contraIII_involved['3 contra pos']) > 0
+III_tot = (ipsiIII_involved['3 ipsi pos'] + contraIII_involved['3 contra pos']) >=0
+II_III_corr = pd.concat([pd.DataFrame(ipsiII_pos), pd.DataFrame(III_involved, columns=['3 involved']), pd.DataFrame(III_tot, columns=['3 total'])], axis=1)
+II_III_corrdata = pd.DataFrame(II_III_corr.groupby(['2 ipsi pos']).sum())
+
+WIDTH, SPACE = 0.8, 0.6
+LABELS  = ["0", "1", "2", "3", "4", "6"]
+WIDTHS  = np.array([WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH])
+
+# compute positions of bar centers based on WIDTHS and SPACE, such that the space
+# between neighboring bars is SPACE. The first bar is centered at SPACE/2 + WIDTH/2.
+POSITIONS = np.zeros_like(WIDTHS)
+for i, width in enumerate(WIDTHS):
+    spaces = (0.5 + i) * SPACE
+    widths = sum(WIDTHS[:np.maximum(0,i)]) + width/2
+    POSITIONS[i] = spaces + widths
+
+
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+  # instantiate a second axes that shares the same x-axis
+a = ax1.bar(POSITIONS, round(100*II_III_corrdata['3 involved']/II_III_corrdata['3 total'],0), color=usz_red, width=WIDTHS, label= "lymph nodes investigated")
+ax1.set_xticks(POSITIONS, LABELS)
+ax1.set_xlabel("lymph nodes positive level II ipsilateral")
+ax1.set_ylabel("involvement level III [%]")
+
+j = 0
+for p in a.patches:
+    if p.get_height()==0:
+      plt.annotate(str(II_III_corrdata['3 involved'][j]) + ' / ' + str(II_III_corrdata['3 total'][j]), 
+                  (p.get_x() + p.get_width() / 2., 2), 
+                    ha = 'center', va = 'center', 
+                    size=7,
+                    xytext = (0, 0), 
+                    textcoords = 'offset points')
+    else:
+        plt.annotate(str(II_III_corrdata['3 involved'][j]) + ' / ' + str(II_III_corrdata['3 total'][j]), 
+                  (p.get_x() + p.get_width() / 2., p.get_height() / 2.), 
+                    ha = 'center', va = 'center', 
+                    size=7,
+                    xytext = (0, 0), 
+                    textcoords = 'offset points')
+    if j==4:
+        j += 2
+    else:
+        j += 1
+
+plt.savefig("./figures/II_III_corr_OC.png")
