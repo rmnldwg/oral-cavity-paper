@@ -2,6 +2,14 @@
 
 _Paper on lymphatic involvement pattern data of oral cavity squamous cell carcinomas._
 
+## Quick Setup
+
+To quickly get and install everything necessary to reproduce the pipeline (or add scripts and plots to the pipeline), simply run the `setup.sh` script at the root of this repository:
+
+```
+bash setup.sh
+```
+
 ## Repository Structure
 
 - The `requirements.txt` file lists all Python packages necessary to recreate the plots and figures. If you write a new script that uses a library not listed here, add it to the requirements file.
