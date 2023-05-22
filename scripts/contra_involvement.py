@@ -2,6 +2,7 @@
 """
 Look at correlations between involvment in the lymph node levels I, II, and III.
 """
+# pylint: disable=import-error
 # pylint: disable=singleton-comparison
 from itertools import product
 from pathlib import Path
@@ -10,7 +11,6 @@ import pandas as pd
 from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
-
 LNLS = ["I", "II", "III", "IV", "V"]
 
 

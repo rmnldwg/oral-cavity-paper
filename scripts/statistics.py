@@ -2,6 +2,7 @@
 """
 Plot panel with patient cohort statistics for the joined CLB & ISB dataset.
 """
+# pylint: disable=import-error
 # pylint: disable=singleton-comparison
 from pathlib import Path
 from typing import List

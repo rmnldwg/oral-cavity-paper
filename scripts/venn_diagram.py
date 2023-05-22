@@ -2,9 +2,9 @@
 """
 Create a Venn diagram of the involement in LNLs I, II, and III.
 """
-from itertools import product
-
+# pylint: disable=import-error
 # pylint: disable=singleton-comparison
+from itertools import product
 from pathlib import Path
 
 import matplotlib.pyplot as plt

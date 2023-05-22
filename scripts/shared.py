@@ -6,11 +6,13 @@ from pathlib import Path
 
 import pandas as pd
 
-DATAFILE = Path("./data/enhanced.csv")
+DATA_DIR = Path("./data")
+DATAFILE = DATA_DIR / "enhanced.csv"
 FIGURES_DIR = Path("./figures")
 TABLES_DIR = Path("./tables")
+SCRIPTS_DIR = Path("./scripts")
 
-MPLSTYLE = Path("./scripts/.mplstyle")
+MPLSTYLE = SCRIPTS_DIR / ".mplstyle"
 COLORS = {
     "green": "#00afa5",
     "red": "#ae0060",

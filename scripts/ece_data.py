@@ -3,6 +3,8 @@
 Create a table with per-level involvement prevalence for patients with and without
 extracapsular extension (ECE).
 """
+# pylint: disable=import-error
+# pylint: disable=singleton-comparison
 from pathlib import Path
 
 import pandas as pd
@@ -10,7 +12,6 @@ from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 LNLS = ["I", "II", "III", "IV", "V"]
-
 
 if __name__ == "__main__":
     dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LNLS)
