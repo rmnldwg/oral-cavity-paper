@@ -34,10 +34,10 @@ Additionally, the `params.yaml` defines some necessary parameters, e.g. for the 
 
 ## Running the Pipeline
 
-Before running the pipeline, you can define the environemnt variable `FIGURES_OUTPUT_DIR` to tell the final stage in the `dvc.yaml` file where to place the created plots. For example:
+Before running the pipeline, you can define the environemnt variable `OUTPUT_DIR` to tell the final stage in the `dvc.yaml` file where to place the created plots. For example:
 
 ```bash
-export FIGURES_OUTPUT_DIR="/path/to/shared/figures/folder"
+export OUTPUT_DIR="/path/to/shared/figures-or-tables/folder"
 ```
 
 This can be used to automatically put the latest figures in our shared Teams folder. If you do not set the variable, [DVC] will skip this step with a warning.
