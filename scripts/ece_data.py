@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Create a table with per-level involvement prevalence for patients with and without
 extracapsular extension (ECE).
@@ -5,13 +6,7 @@ extracapsular extension (ECE).
 from pathlib import Path
 
 import pandas as pd
-
-from shared import (
-    DATAFILE,
-    TABLES_DIR,
-    load_and_prepare_data,
-)
-
+from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 LNLS = ["I", "II", "III", "IV", "V"]
@@ -38,7 +33,7 @@ if __name__ == "__main__":
         for row in ["N+", "ECE+", "ECE?", "ECE-"]:
             subset = max_llh_data[side].loc[is_nplus & subset_condition[row]]
             table.loc[(side, row), "total"] = len(subset)
-        
+
             for lnl in LNLS:
                 table.loc[(side, row), lnl] = int(subset[lnl].sum())
 

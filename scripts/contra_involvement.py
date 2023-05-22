@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Look at correlations between involvment in the lymph node levels I, II, and III.
 """
@@ -6,13 +7,7 @@ from itertools import product
 from pathlib import Path
 
 import pandas as pd
-
-from shared import (
-    DATAFILE,
-    TABLES_DIR,
-    load_and_prepare_data,
-)
-
+from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 
@@ -46,7 +41,7 @@ if __name__ == "__main__":
     index = pd.MultiIndex.from_tuples(key_product, names=["t_stage", "midline", "ipsi"])
     data = pd.DataFrame(index=index, columns=columns)
 
-    for key_tuple, (t,m,i) in zip(key_product, val_product):
+    for key_tuple, (t, m, i) in zip(key_product, val_product):
         subset = max_llh_data.loc[t & m & i]
         data.loc[key_tuple, "total"] = len(subset)
         for lnl in LNLS:
