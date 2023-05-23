@@ -12,9 +12,9 @@ from matplotlib import colormaps
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.colors import ListedColormap
 from matplotlib.gridspec import GridSpec
+from matplotlib.image import imread
 
 from lyscripts.plot.histograms import get_size
-
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
 OUTPUT_DIR = Path("./figures")
@@ -22,20 +22,13 @@ MPLSTYLE = Path("./scripts/.mplstyle")
 
 # barplot settings
 WIDTH, SPACE = 0.8, 0.6
-LABELS  = ["Ia ipsi", 
-           "Ia", 
-           "Ib ipsi", 
-           "Ib contra", 
+LABELS  = ["Ib ipsi", 
            "II ipsi", 
-           "II contra", 
            "III ipsi", 
-           "III contra", 
            "IV ipsi", 
-           "IV contra", 
-           "V ipsi", 
-           "V contra"]
+           "V ipsi"]
 WIDTHS  = np.array(
-    [WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH, WIDTH]
+    [WIDTH, WIDTH, WIDTH, WIDTH, WIDTH]
     )
 
 # compute positions of bar centers based on WIDTHS and SPACE, such that the space
@@ -99,8 +92,8 @@ def set_size(width="single", unit="cm", ratio="golden"):
 
 data_raw = pd.read_csv("./data/lymph_nodes_invest_OC.csv", sep=";")
 
-plot_data_pos = data_raw.iloc[:,[3,5,7,9,11,13,15,17,19,21,23,25]]
-plot_data_inv = data_raw.iloc[:,[2,4,6,8,10,12,14,16,18,20,22,24]]
+plot_data_pos = data_raw.iloc[:,[7,11,15,19,23]]
+plot_data_inv = data_raw.iloc[:,[6,10,14,18,22]]
 
 plt.style.use(MPLSTYLE)
 
@@ -111,7 +104,8 @@ plt.xticks(POSITIONS, LABELS)
 plt.legend()$
 """
 
-fig = plt.figure()
+fig = plt.figure(figsize=set_size(width="full", ratio=1.8), 
+                 constrained_layout=True)
 ax1 = fig.add_subplot(111)
   # instantiate a second axes that shares the same x-axis
 a = ax1.bar(POSITIONS + SPACE/3, plot_data_inv.sum(), color="#00afa5", width=WIDTHS, label= "lymph nodes investigated")
@@ -133,6 +127,7 @@ ax2.set_yticks(np.arange(0, 11, step=1))
 lines, labels = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax2.legend(lines + lines2, labels + labels2, loc=0)
+plt.title("Number of lymph nodes investigated/involved per level")
 
 plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
 
@@ -176,6 +171,7 @@ for r in range(12):
   ax2 = fig.add_subplot(spec[0,1], sharey=ax)
   ax2.hist(data.iloc[:,1], orientation="horizontal", bins = 8, range=[-0.5,7.5], color="#c5d5db")
   plt.setp(ax2.get_yticklabels(), visible=False);
+  plt.xlim(0,300)
   plt.axhline(data.iloc[:,1].mean(), color='k', linestyle='dashed', linewidth=0.5)
   ax2.text(plt.xlim()[1]/2, data.iloc[:,1].mean(), 'mean', rotation='horizontal', rotation_mode='anchor', va='bottom', ha='center', fontsize='xx-small')
   ax2.xaxis.set_ticks_position('top')
@@ -189,6 +185,7 @@ for r in range(12):
   ax3 = fig.add_subplot(spec[1,0], sharex=ax)
   b = ax3.hist(data.iloc[:,0], bins = 43, range=[-0.5,42.5], color="#c5d5db")
   plt.setp(ax3.get_xticklabels(), visible=True);
+  plt.ylim(0,65)
   ax3.axvline(data.iloc[:,0].mean(), color='k', linestyle='dashed', linewidth=0.5)
   ax3.text(data.iloc[:,0].mean(), plt.ylim()[1]/2, 'mean', rotation='vertical', rotation_mode='anchor', va='bottom', ha='center', fontsize='xx-small')
   ax3.set_xlabel("number of lymph nodes investigated")
@@ -266,3 +263,45 @@ b = ax.boxplot(data_raw['total invest'])
 ax.set_ylabel("number of lymph nodes")
 
 plt.savefig("./figures/investigated_LN_OC.png")
+
+#generate the plot with the 2d histograms as subplots
+# Load the image files
+image1 = imread('./figures/lymph_invest_hist2dIb ipsi_OC.png')
+image2 = imread('./figures/lymph_invest_hist2dII ipsi_OC.png')
+image3 = imread('./figures/lymph_invest_hist2dIII ipsi_OC.png')
+image4 = imread('./figures/lymph_invest_hist2dIV ipsi_OC.png')
+image5 = imread('./figures/lymph_invest_hist2dV ipsi_OC.png')
+image6 = imread('./figures/lymph_invest_hist_OC.png')
+
+
+# Create a new figure
+fig = plt.figure(figsize=set_size(width="full", ratio=1.2),
+                 constrained_layout=True, dpi=1000)
+
+# Add subplots and display images
+ax1 = fig.add_subplot(3, 2, 1)
+ax1.imshow(image1)
+ax1.axis('off')
+
+ax2 = fig.add_subplot(3, 2, 2)
+ax2.imshow(image2)
+ax2.axis('off')
+
+ax3 = fig.add_subplot(3, 2, 3)
+ax3.imshow(image3)
+ax3.axis('off')
+
+ax4 = fig.add_subplot(3, 2, 4)
+ax4.imshow(image4)
+ax4.axis('off')
+
+ax5 = fig.add_subplot(3, 2, 5)
+ax5.imshow(image5)
+ax5.axis('off')
+
+ax6 = fig.add_subplot(3, 2, 6)
+ax6.imshow(image6)
+ax6.axis('off')
+
+# Show the figure
+plt.savefig("./figures/lymph_invest_hist2ds_combined_OC.png")
