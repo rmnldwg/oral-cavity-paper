@@ -138,24 +138,23 @@ for r in range(12):
                  constrained_layout=True)
   spec = GridSpec(ncols=2, nrows=2, figure=fig, 
                    width_ratios=[1., 0.16], height_ratios=[1., 0.37])
-
+  
   ax = fig.add_subplot(spec[0,0])
 
     # instantiate a second axes that shares the same x-axis
   hist = plt.hist2d(data.iloc[:,0], data.iloc[:,1], range=[(min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5),(min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5)], bins=(1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), 1+int(max(data.iloc[:,1])-min(data.iloc[:,1]))), cmap=green_to_red)
   plt.title(colname + " (n=" + str(len(data)) + ")")
 
-  if max(data.iloc[:,0])<11:
-    plt.xticks(np.arange(min(data.iloc[:,0]), 1+max(data.iloc[:,0]), 1))
-
-  else:
-    plt.xticks(np.arange(min(data.iloc[:,0]), 1+max(data.iloc[:,0]), 2))
-
   plt.yticks(np.arange(min(data.iloc[:,1]), 1+max(data.iloc[:,1]), 1))
+  plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False,
+   ) # labels along the bottom edge are off
     
-  ax.set_xlabel("number of lymph nodes investigated")
   ax.set_ylabel("number of positive lymph nodes")
-
 
   for i in range(len(hist[0])):
       for j in range(len(hist[0][i])):
@@ -167,10 +166,28 @@ for r in range(12):
   ax2 = fig.add_subplot(spec[0,1], sharey=ax)
   ax2.hist(data.iloc[:,1], orientation="horizontal", bins = 1+int(max(data.iloc[:,1])-min(data.iloc[:,1])), range=[min(data.iloc[:,1])-0.5,max(data.iloc[:,1])+0.5], color="#c5d5db")
   plt.setp(ax2.get_yticklabels(), visible=False);
+  plt.axhline(data.iloc[:,1].mean(), color='k', linestyle='dashed', linewidth=0.5)
+  ax2.text(plt.xlim()[1]/2, data.iloc[:,1].mean(), 'mean', rotation='horizontal', rotation_mode='anchor', va='bottom', ha='center', fontsize='xx-small')
+  ax2.xaxis.set_ticks_position('top')
+  def xtick_formatter(x, pos):
+    if x == 0:
+        return ''
+    else:
+        return str(int(x))
+  ax2.xaxis.set_major_formatter(plt.FuncFormatter(xtick_formatter))
 
   ax3 = fig.add_subplot(spec[1,0], sharex=ax)
-  ax3.hist(data.iloc[:,0], bins = 1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), range=[min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5], color="#c5d5db")
-  plt.setp(ax3.get_xticklabels(), visible=False);
+  b = ax3.hist(data.iloc[:,0], bins = 1+int(max(data.iloc[:,0])-min(data.iloc[:,0])), range=[min(data.iloc[:,0])-0.5,max(data.iloc[:,0])+0.5], color="#c5d5db")
+  plt.setp(ax3.get_xticklabels(), visible=True);
+  ax3.axvline(data.iloc[:,0].mean(), color='k', linestyle='dashed', linewidth=0.5)
+  ax3.text(data.iloc[:,0].mean(), plt.ylim()[1]/2, 'mean', rotation='vertical', rotation_mode='anchor', va='bottom', ha='center', fontsize='xx-small')
+  ax3.set_xlabel("number of lymph nodes investigated")
+  def ytick_formatter(y, pos):
+    if y == 0:
+        return ''
+    else:
+        return str(int(y))
+  ax3.yaxis.set_major_formatter(plt.FuncFormatter(ytick_formatter))
 
   plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
 
@@ -197,7 +214,8 @@ for i, width in enumerate(WIDTHS):
     POSITIONS[i] = spaces + widths
 
 
-fig = plt.figure()
+fig = plt.figure(figsize=set_size(width="full", ratio=1.8), 
+                 constrained_layout=True)
 ax1 = fig.add_subplot(111)
   # instantiate a second axes that shares the same x-axis
 a = ax1.bar(POSITIONS, round(100*II_III_corrdata['3 involved']/II_III_corrdata['3 total'],0), color=usz_red, width=WIDTHS, label= "lymph nodes investigated")
@@ -227,3 +245,14 @@ for p in a.patches:
         j += 1
 
 plt.savefig("./figures/II_III_corr_OC.png")
+
+#boxplot for the number of investigated lymph nodes
+fig = plt.figure(figsize=set_size(width="full", ratio=1.8), 
+                 constrained_layout=True)
+ax = fig.add_subplot(111)
+
+
+b = ax.boxplot(data_raw['total invest'])
+ax.set_ylabel("number of lymph nodes")
+
+plt.savefig("./figures/investigated_LN_OC.png")

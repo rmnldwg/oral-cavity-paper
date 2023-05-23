@@ -59,9 +59,8 @@ def set_size(width="single", unit="cm", ratio="golden"):
 
 reg_data_raw = pd.read_csv("./data/lymph_nodes_invest_OC.csv", sep=";")
 reg_data = reg_data_raw.iloc[:,[-6,-2,-1]].dropna()
+print(reg_data)
 classification_data = reg_data_raw.iloc[:,-1].dropna()
-
-reg_data.iloc[:,0]
 
 # Histogram with largest lymph node on x axis and fn and tp on y axis and confusion matrix as a table
 data = {
@@ -144,31 +143,43 @@ plt.savefig('./figures/confusion_matrix.png')
 
 
 #logistic regression
+import statsmodels.api as sm
 X = pd.DataFrame(reg_data.iloc[:,0])
 X = X.values.reshape((-1,1))
 y = reg_data.iloc[:,1]
+X = sm.add_constant(X)
 
 # split X and y into training and testing sets
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-logreg = LogisticRegression()
-logreg.fit(X_train, y_train)
 
-y_pred = logreg.predict(X_test)
-print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(logreg.score(X_test, y_test)))
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+model = sm.Logit(y_train, X_train)
+result = model.fit(method='newton')
+
+y_pred = result.predict(X_test)
+y_pred_pos = y_pred
+#print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(logreg.score(X_test, y_test)))
 
 from sklearn.metrics import confusion_matrix
-confusion_matrix = confusion_matrix(y_test, y_pred)
-print(confusion_matrix)
-
+#confusion_matrix = confusion_matrix(y_test, y_pred)
+#print(confusion_matrix)
+print("\n\nParameters (intercept, size):\n", result.params, "\n\n")
+print("confusion matrix:\n", result.pred_table(),"\n\n")
+print("summary:\n", result.summary(), "\n\n")
+print("A lymph node that is 5mm larger is x times the odds of predicting the N-state correctly with the 5mm smaller lymph node:",2.71828**(5*0.146), "\n\n")
 from sklearn.metrics import classification_report
-print(classification_report(y_test, y_pred))
+print(classification_report(y_test, np.rint(y_pred)))
 
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
-logit_roc_auc = roc_auc_score(y_test, logreg.predict(X_test))
-fpr, tpr, thresholds = roc_curve(y_test, logreg.predict_proba(X_test)[:,1])
+# Calculate the ROC AUC score
+logit_roc_auc = roc_auc_score(y_test, y_pred_pos)
+
+# Calculate the false positive rate and true positive rate for the ROC curve
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_pos)
+
+# Plot the ROC curve
 plt.figure()
 plt.plot(fpr, tpr, label='Logistic Regression (area = %0.2f)' % logit_roc_auc)
 plt.plot([0, 1], [0, 1],'r--')
@@ -178,4 +189,4 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver operating characteristic')
 plt.legend(loc="lower right")
-plt.savefig('Log_ROC')
+plt.savefig('./figures/log_ROC.png')
