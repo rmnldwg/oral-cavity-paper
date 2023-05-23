@@ -198,14 +198,14 @@ for r in range(12):
 
   plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
 
-
+#wrong!!!: need to change data file as it does not differentiate between no information because of not resected or resected together with other levels
 #influence of number of positive lymph node levels in level 2 on the percentage of involved patients in level 3
-ipsiII_pos = data_raw.iloc[:,[3+2*4]].fillna(0)
-ipsiIII_involved = data_raw.iloc[:,[3+2*6]].fillna(0)
-contraIII_involved = data_raw.iloc[:,[3+2*7]].fillna(0)
+ipsiII_pos = data_raw.iloc[:,[3+2*4]].fillna(-1)
+ipsiIII_involved = data_raw.iloc[:,[3+2*6]].fillna(-1)
+contraIII_involved = data_raw.iloc[:,[3+2*7]].fillna(-1)
 III_involved = (ipsiIII_involved['3 ipsi pos'] + contraIII_involved['3 contra pos']) > 0
 III_tot = (ipsiIII_involved['3 ipsi pos'] + contraIII_involved['3 contra pos']) >=0
-II_III_corr = pd.concat([pd.DataFrame(ipsiII_pos), pd.DataFrame(III_involved, columns=['3 involved']), pd.DataFrame(III_tot, columns=['3 total'])], axis=1)
+II_III_corr = pd.concat([pd.DataFrame(ipsiII_pos[ipsiII_pos>=0]), pd.DataFrame(III_involved[III_involved>=0], columns=['3 involved']), pd.DataFrame(III_tot[III_tot>=0], columns=['3 total'])], axis=1)
 II_III_corrdata = pd.DataFrame(II_III_corr.groupby(['2 ipsi pos']).sum())
 
 WIDTH, SPACE = 0.8, 0.6
