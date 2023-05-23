@@ -45,6 +45,17 @@ stages:
       outs:
         - figures/${item}.png
 
+  logistic-regression:
+    cmd: >
+      .venv/bin/python scripts/logistic_regression.py
+    deps:
+      - scripts/logistic_regression.py
+      - data/lymph_nodes_invest_OC.csv
+    outs:
+      - figures/confusionmat_lymphsize_hist.png
+      - figures/confusion_matrix.png
+      - figures/Log_ROC.svg
+
   tables:
     foreach:
       - contra_involvement

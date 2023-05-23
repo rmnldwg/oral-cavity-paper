@@ -1,8 +1,8 @@
 schema: '2.0'
 stages:
   join:
-    cmd: "lyscripts data join --inputs data/2022-isb-multisite.csv data/2022-clb-multisite.csv\
-      \ --output data/joined.csv\n"
+    cmd: "lyscripts data join --inputs data/2022-isb-multisite.csv data/2022-clb-multisite.csv
+      --output data/joined.csv\n"
     deps:
     - path: data/2022-clb-multisite.csv
       md5: c314b7b65b23b6dd5c0ac4e51b3646ca
@@ -15,8 +15,8 @@ stages:
       md5: 71841879203909ee89857bd241e49981
       size: 357907
   enhance:
-    cmd: "lyscripts data enhance data/joined.csv data/enhanced.csv --modalities CT\
-      \ MRI PET FNA diagnostic_consensus pathology pCT\n"
+    cmd: "lyscripts data enhance data/joined.csv data/enhanced.csv --modalities CT
+      MRI PET FNA diagnostic_consensus pathology pCT\n"
     deps:
     - path: data/joined.csv
       md5: 71841879203909ee89857bd241e49981
@@ -50,7 +50,7 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: 88021659113885872d44ac41065ff6ac
+      md5: ccfa2a45467eec725093525c1aa2d793
       size: 458572
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
@@ -72,9 +72,9 @@ stages:
       md5: 8f2f11ed8419c435154e665ba6f6d00a
       size: 794
     - path: figures
-      md5: f455c05d252f7e0ae14efff782dd223a.dir
-      size: 301591
-      nfiles: 3
+      md5: 06124c81da2eaa10c6cb4ae29eb1c86c.dir
+      size: 452632
+      nfiles: 8
     - path: tables
       md5: 96769a0ce2ff9503ca9fe5f78e540322.dir
       size: 902
@@ -96,11 +96,11 @@ stages:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 88021659113885872d44ac41065ff6ac
+      md5: ccfa2a45467eec725093525c1aa2d793
       size: 458572
     - path: scripts/contra_involvement.py
-      md5: 091195bd62e027d37cef2847e4c96ff4
-      size: 1652
+      md5: 686dbabbd13bea735d4105d3623f0467
+      size: 1689
     outs:
     - path: tables/contra_involvement.csv
       md5: 8b92ff1820277cf6247c7be0b271a4d7
@@ -109,11 +109,11 @@ stages:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 88021659113885872d44ac41065ff6ac
+      md5: ccfa2a45467eec725093525c1aa2d793
       size: 458572
     - path: scripts/statistics.py
-      md5: 5c5da03f0fa698b650bdcaac78ebaf64
-      size: 10742
+      md5: a6f04e8371cde2665ddd0598ecab9227
+      size: 10914
     outs:
     - path: figures/statistics.png
       md5: 8ee419375b8fd843aa66d538dfae271b
@@ -122,11 +122,11 @@ stages:
     cmd: ".venv/bin/python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 88021659113885872d44ac41065ff6ac
+      md5: ccfa2a45467eec725093525c1aa2d793
       size: 458572
     - path: scripts/venn_diagram.py
-      md5: b5bcd84266261287d4b26cae19db9e33
-      size: 1843
+      md5: 70f7fffb093619080a8f7f469e397f1f
+      size: 1911
     outs:
     - path: figures/venn_diagram.png
       md5: 3f6e8fb6fdbab05a73a9f101d578a4b4
@@ -135,12 +135,31 @@ stages:
     cmd: ".venv/bin/python scripts/ece_data.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 88021659113885872d44ac41065ff6ac
+      md5: ccfa2a45467eec725093525c1aa2d793
       size: 458572
     - path: scripts/ece_data.py
-      md5: bc717d73e661fc3b671bb812508bd4c4
-      size: 1315
+      md5: 3fe6b4d1ee3bad3a594b695a22554303
+      size: 1381
     outs:
     - path: tables/ece_data.csv
       md5: 4bcfb44a048a115afe61582b9f0319f7
       size: 225
+  logistic-regression:
+    cmd: ".venv/bin/python scripts/logistic_regression.py\n"
+    deps:
+    - path: data/lymph_nodes_invest_OC.csv
+      md5: bbe7e3def57cbb40358e4cc01197963e
+      size: 25487
+    - path: scripts/logistic_regression.py
+      md5: 978d1404475e4dca7766d2e76932d1b6
+      size: 5229
+    outs:
+    - path: figures/Log_ROC.svg
+      md5: 140ab8a0f46e750c83d8beedc2f60931
+      size: 30934
+    - path: figures/confusion_matrix.png
+      md5: a1b25fc36b98479173504356ffdf5c7b
+      size: 30271
+    - path: figures/confusionmat_lymphsize_hist.png
+      md5: f13f2be6a0bd64cf081e07465befc5b1
+      size: 53804

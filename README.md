@@ -2,6 +2,14 @@
 
 _Paper on lymphatic involvement pattern data of oral cavity squamous cell carcinomas._
 
+## Quick Setup
+
+To quickly get and install everything necessary to reproduce the pipeline (or add scripts and plots to the pipeline), simply run the `setup.sh` script at the root of this repository:
+
+```
+bash setup.sh
+```
+
 ## Repository Structure
 
 - The `requirements.txt` file lists all Python packages necessary to recreate the plots and figures. If you write a new script that uses a library not listed here, add it to the requirements file.
@@ -26,10 +34,10 @@ Additionally, the `params.yaml` defines some necessary parameters, e.g. for the 
 
 ## Running the Pipeline
 
-Before running the pipeline, you can define the environemnt variable `FIGURES_OUTPUT_DIR` to tell the final stage in the `dvc.yaml` file where to place the created plots. For example:
+Before running the pipeline, you can define the environemnt variable `OUTPUT_DIR` to tell the final stage in the `dvc.yaml` file where to place the created plots. For example:
 
 ```bash
-export FIGURES_OUTPUT_DIR="/path/to/shared/figures/folder"
+export OUTPUT_DIR="/path/to/shared/figures-or-tables/folder"
 ```
 
 This can be used to automatically put the latest figures in our shared Teams folder. If you do not set the variable, [DVC] will skip this step with a warning.
