@@ -7,11 +7,11 @@ stages:
     desc: Concatenate the two datasets into one
     cmd: >
       lyscripts data join
-      --inputs data/2022-isb-multisite.csv data/2022-clb-multisite.csv
+      --inputs data/2023-isb-multisite.csv data/2023-clb-multisite.csv
       --output data/joined.csv
     deps:
-      - data/2022-isb-multisite.csv
-      - data/2022-clb-multisite.csv
+      - data/2023-isb-multisite.csv
+      - data/2023-clb-multisite.csv
     outs:
       - data/joined.csv
 
@@ -44,17 +44,6 @@ stages:
         .venv/bin/python scripts/${item}.py
       outs:
         - figures/${item}.png
-
-  logistic-regression:
-    cmd: >
-      .venv/bin/python scripts/logistic_regression.py
-    deps:
-      - scripts/logistic_regression.py
-      - data/lymph_nodes_invest_OC.csv
-    outs:
-      - figures/confusionmat_lymphsize_hist.png
-      - figures/confusion_matrix.png
-      - figures/Log_ROC.svg
 
   tables:
     foreach:
