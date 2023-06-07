@@ -20,6 +20,30 @@ To quickly get and install everything necessary to reproduce the pipeline (or ad
 bash setup.sh
 ```
 
+## Reproducing Figures & Tables using Docker
+
+> :warning: **Note** \
+> You need to have a working [docker installation] for this.
+
+After having cloned the repository (`git clone https://github.com/rmnldwg/oral-cavity-paper`) and changed you working directory into it (`cd oral-cavity-paper`), build the docker image:
+
+```
+docker build -t ocr-image .
+```
+
+and then run it with the following command:
+
+```
+docker run \
+    --rm --volume .:/usr/src/oral-cavity-paper \
+    --name ocp-container \
+    ocp-image
+```
+
+That should run the pipeline from joining the datasets to plotting the figures and tables.
+
+[docker installation]: https://docs.docker.com/get-docker/
+
 
 ## Repository Structure
 
