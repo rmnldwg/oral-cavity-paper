@@ -4,6 +4,13 @@ FROM python:3.10-slim-bullseye
 # Instal git, because it's needed for DVC
 RUN apt update && apt install -y git
 
+# install DVC
+RUN pip install dvc[azure]
+
+# Put DVC cache in another directory, so that it doesn't get
+# committed to the repository
+RUN dvc cache dir --global $HOME/.dvc/cache
+
 # Use this directory as the working directory inside the container
 WORKDIR /usr/src/oral-cavity-paper
 
