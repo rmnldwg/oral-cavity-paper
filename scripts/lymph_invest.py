@@ -154,9 +154,11 @@ colnames = [
     "IV contra",
     "V ipsi",
     "V contra",
+    "Ib-III ipsi",
+    "Ib-III contra",
 ]
 
-for r in range(12):
+for r in range(14):
     data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
     colname = colnames[r]
 
