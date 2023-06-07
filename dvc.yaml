@@ -41,7 +41,7 @@ stages:
         - data/enhanced.csv
         - scripts/${item}.py
       cmd: >
-        .venv/bin/python scripts/${item}.py
+        python scripts/${item}.py
       outs:
         - figures/${item}.png
 
@@ -54,7 +54,7 @@ stages:
         - data/enhanced.csv
         - scripts/${item}.py
       cmd: >
-        .venv/bin/python scripts/${item}.py
+        python scripts/${item}.py
       outs:
         - tables/${item}.csv
 
