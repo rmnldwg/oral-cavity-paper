@@ -5,6 +5,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import statsmodels.api as sm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.gridspec import GridSpec
 from matplotlib.image import imread
@@ -288,6 +290,16 @@ for r in range(14):
     data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
     colname = colnames[r]
 
+    # linear regression
+    x = data.iloc[:, 0]
+    x1 = data.iloc[:, 0]
+    y = data.iloc[:, 1]
+    x = sm.add_constant(x)  # adding a constant
+    lm = sm.OLS(y, x).fit()  # fitting the model
+    intercept, slope = lm.params
+    pval = lm.pvalues[1]
+    print(lm.summary())
+
     fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
     spec = GridSpec(
         ncols=2,
@@ -326,6 +338,19 @@ for r in range(14):
         cmap=green_to_red_modified,
     )
 
+    # plt.plot(x, intercept + slope * x, color='black', linewidth=1, linestyle='--')
+    sns.regplot(
+        x=x1,
+        y=y,
+        ax=ax,
+        scatter=False,
+        ci=95,
+        color="black",
+        line_kws={"linewidth": 0.5},
+        label=f"Regression Line (p-value={pval:.2f})",
+    )
+    ax.collections[1].set_label("95% Confidence interval")
+    plt.legend(fontsize="xx-small", loc="upper left")
     plt.grid(False)
     plt.title(colname + " (n=" + str(len(data)) + ")")
     plt.yticks(np.arange(0, 8, 1))
@@ -562,8 +587,11 @@ plt.savefig("./figures/lymph_invest_hist2ds_combined_OC.png")
 #linear regression pos lymph nodes ~ invested lymph node
 for r in range(14):
     data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
-    X = data.iloc[:,0]
+    x = data.iloc[:,0]
     y = data.iloc[:,1]
-    reg = LinearRegression().fit(X, y)
-    reg.coef_
+    x = sm.add_constant(x) # adding a constant
+    lm = sm.OLS(y,x).fit() # fitting the model
+    result = lm.fit()
+    intercept, slope = result.params
+    print(lm.summary())
 """
