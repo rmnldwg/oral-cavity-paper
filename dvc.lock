@@ -50,7 +50,7 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: cc51168f621bb0ae4b05c1ff2da1919a
+      md5: 77c2b4c7b8f4ce606b3b519c95ca7a94
       size: 458572
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
@@ -93,10 +93,10 @@ stages:
       md5: 8b92ff1820277cf6247c7be0b271a4d7
       size: 639
   tables@contra_involvement:
-    cmd: ".venv/bin/python scripts/contra_involvement.py\n"
+    cmd: "python scripts/contra_involvement.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: cc51168f621bb0ae4b05c1ff2da1919a
+      md5: 77c2b4c7b8f4ce606b3b519c95ca7a94
       size: 458572
     - path: scripts/contra_involvement.py
       md5: 686dbabbd13bea735d4105d3623f0467
@@ -106,10 +106,10 @@ stages:
       md5: f9ebb649087a6efb2f3136c6afe83451
       size: 639
   figures@statistics:
-    cmd: ".venv/bin/python scripts/statistics.py\n"
+    cmd: "python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: cc51168f621bb0ae4b05c1ff2da1919a
+      md5: 77c2b4c7b8f4ce606b3b519c95ca7a94
       size: 458572
     - path: scripts/statistics.py
       md5: a6f04e8371cde2665ddd0598ecab9227
@@ -119,10 +119,10 @@ stages:
       md5: 7484edd71c94b2dbbe6561955f172ed6
       size: 221932
   figures@venn_diagram:
-    cmd: ".venv/bin/python scripts/venn_diagram.py\n"
+    cmd: "python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: cc51168f621bb0ae4b05c1ff2da1919a
+      md5: 77c2b4c7b8f4ce606b3b519c95ca7a94
       size: 458572
     - path: scripts/venn_diagram.py
       md5: 70f7fffb093619080a8f7f469e397f1f
@@ -132,10 +132,10 @@ stages:
       md5: 3f6e8fb6fdbab05a73a9f101d578a4b4
       size: 77280
   tables@ece_data:
-    cmd: ".venv/bin/python scripts/ece_data.py\n"
+    cmd: "python scripts/ece_data.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: cc51168f621bb0ae4b05c1ff2da1919a
+      md5: 77c2b4c7b8f4ce606b3b519c95ca7a94
       size: 458572
     - path: scripts/ece_data.py
       md5: 3fe6b4d1ee3bad3a594b695a22554303
