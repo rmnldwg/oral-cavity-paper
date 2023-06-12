@@ -139,7 +139,6 @@ plt.title("Number of lymph nodes investigated/involved per level")
 
 plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
 
-
 # 2D histogram with number of positive and investigated lymph
 colnames = [
     "Ia ipsi",
@@ -265,6 +264,154 @@ for r in range(14):
     ax3.yaxis.set_major_formatter(plt.FuncFormatter(ytick_formatter))
 
     plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
+
+# normalized 2D histogram with number of positive and investigated lymph
+colnames = [
+    "Ia ipsi",
+    "Ia",
+    "Ib ipsi",
+    "Ib contra",
+    "II ipsi",
+    "II contra",
+    "III ipsi",
+    "III contra",
+    "IV ipsi",
+    "IV contra",
+    "V ipsi",
+    "V contra",
+    "Ib-III ipsi",
+    "Ib-III contra",
+]
+
+for r in range(14):
+    data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
+    colname = colnames[r]
+
+    fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
+    spec = GridSpec(
+        ncols=2,
+        nrows=2,
+        figure=fig,
+        width_ratios=[1.0, 0.16],
+        height_ratios=[1.0, 0.37],
+    )
+
+    ax = fig.add_subplot(spec[0, 0])
+    combinations = np.zeros((71, 11))
+    for i in range(combinations.shape[0]):
+        for j in range(combinations.shape[1]):
+            combinations[i, j] = len(
+                data[(data.iloc[:, 0] == i) & (data.iloc[:, 1] == j)]
+            )
+
+    histmatrixnorm = combinations
+    for i in range(combinations.shape[0]):
+        histmatrixnorm[i, :] = histmatrixnorm[i, :] / sum(histmatrixnorm[i, :]) * 100
+
+    histmatrixnorm = np.nan_to_num(histmatrixnorm)
+
+    x_indices, y_indices = np.indices(histmatrixnorm.shape)
+
+    # instantiate a second axes that shares the same x-axis
+    vmin = np.min(histmatrixnorm[histmatrixnorm > 0])
+    hist = plt.hist2d(
+        x_indices.flatten(),
+        y_indices.flatten(),
+        weights=histmatrixnorm.flatten(),
+        range=[(-0.5, 70.5), (-0.5, 10.5)],
+        bins=(71, 11),
+        cmap=green_to_red_modified,
+        vmin=vmin,
+    )
+
+    plt.title(colname + " (n=" + str(len(data)) + ")")
+    plt.yticks(np.arange(0, 11, 1))
+    plt.tick_params(
+        axis="x",  # changes apply to the x-axis
+        which="both",  # both major and minor ticks are affected
+        bottom=False,  # ticks along the bottom edge are off
+        top=False,  # ticks along the top edge are off
+        labelbottom=False,
+    )  # labels along the bottom edge are off
+
+    ax.set_ylabel("number of positive lymph nodes")
+
+    bin_val = np.zeros((len(hist[0]), len(hist[0][i])))
+    for i in range(len(hist[0])):
+        for j in range(len(hist[0][i])):
+            if hist[0][i][j] > 0:
+                bin_val[i][j] = hist[0][i][j]
+                ax.text(
+                    hist[1][i + 1] - 0.5,
+                    hist[2][j + 1] - 0.5,
+                    int(round(bin_val[i][j], 0)),
+                    ha="center",
+                    va="center",
+                    color="white",
+                    fontsize="xx-small",
+                    rotation="vertical",
+                )
+
+    ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
+    ax2.hist(
+        data.iloc[:, 1],
+        orientation="horizontal",
+        bins=8,
+        range=[-0.5, 7.5],
+        color="#c5d5db",
+    )
+    plt.setp(ax2.get_yticklabels(), visible=False)
+    plt.xlim(0, 300)
+    plt.axhline(data.iloc[:, 1].mean(), color="k", linestyle="dashed", linewidth=0.5)
+    ax2.text(
+        plt.xlim()[1] / 2,
+        data.iloc[:, 1].mean(),
+        "mean",
+        rotation="horizontal",
+        rotation_mode="anchor",
+        va="bottom",
+        ha="center",
+        fontsize="xx-small",
+    )
+    ax2.xaxis.set_ticks_position("top")
+
+    def xtick_formatter(x, pos):
+        if x == 0:
+            return ""
+        else:
+            return str(int(x))
+
+    ax2.xaxis.set_major_formatter(plt.FuncFormatter(xtick_formatter))
+
+    ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
+    b = ax3.hist(data.iloc[:, 0], bins=71, range=[-0.5, 70.5], color="#c5d5db")
+    plt.setp(ax3.get_xticklabels(), visible=True)
+    plt.ylim(0, 65)
+    ax3.axvline(data.iloc[:, 0].mean(), color="k", linestyle="dashed", linewidth=0.5)
+    ax3.text(
+        data.iloc[:, 0].mean(),
+        plt.ylim()[1] / 2,
+        "mean",
+        rotation="vertical",
+        rotation_mode="anchor",
+        va="bottom",
+        ha="center",
+        fontsize="xx-small",
+    )
+    ax3.set_xlabel("number of lymph nodes investigated")
+
+    def ytick_formatter(y, pos):
+        if y == 0:
+            return ""
+        else:
+            return str(int(y))
+
+    ax3.yaxis.set_major_formatter(plt.FuncFormatter(ytick_formatter))
+
+    cbar = plt.colorbar(ax=ax2)
+    cbar.set_label("[%]")
+
+    plt.savefig("./figures/lymph_invest_hist2dnorm" + colname + "_OC.png")
 
 # wrong!!!: need to change data file as it does not differentiate between no information because of not resected or resected together with other levels
 # influence of number of positive lymph node levels in level 2 on the percentage of involved patients in level 3
