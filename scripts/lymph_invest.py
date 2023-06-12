@@ -180,8 +180,9 @@ for r in range(14):
         bins=(43, 8),
         cmap=green_to_red_modified,
     )
-    plt.title(colname + " (n=" + str(len(data)) + ")")
 
+    plt.grid(False)
+    plt.title(colname + " (n=" + str(len(data)) + ")")
     plt.yticks(np.arange(0, 8, 1))
     plt.tick_params(
         axis="x",  # changes apply to the x-axis
@@ -297,7 +298,7 @@ for r in range(14):
     )
 
     ax = fig.add_subplot(spec[0, 0])
-    combinations = np.zeros((71, 11))
+    combinations = np.zeros((43, 8))
     for i in range(combinations.shape[0]):
         for j in range(combinations.shape[1]):
             combinations[i, j] = len(
@@ -306,26 +307,28 @@ for r in range(14):
 
     histmatrixnorm = combinations
     for i in range(combinations.shape[0]):
-        histmatrixnorm[i, :] = histmatrixnorm[i, :] / sum(histmatrixnorm[i, :]) * 100
-
-    histmatrixnorm = np.nan_to_num(histmatrixnorm)
+        if sum(histmatrixnorm[i, :]) > 0:
+            histmatrixnorm[i, :] = (
+                histmatrixnorm[i, :] / sum(histmatrixnorm[i, :]) * 100
+            )
+        else:
+            histmatrixnorm[i, :] = 0
 
     x_indices, y_indices = np.indices(histmatrixnorm.shape)
 
     # instantiate a second axes that shares the same x-axis
-    vmin = np.min(histmatrixnorm[histmatrixnorm > 0])
     hist = plt.hist2d(
         x_indices.flatten(),
         y_indices.flatten(),
         weights=histmatrixnorm.flatten(),
-        range=[(-0.5, 70.5), (-0.5, 10.5)],
-        bins=(71, 11),
+        range=[(-0.5, 42.5), (-0.5, 7.5)],
+        bins=(43, 8),
         cmap=green_to_red_modified,
-        vmin=vmin,
     )
 
+    plt.grid(False)
     plt.title(colname + " (n=" + str(len(data)) + ")")
-    plt.yticks(np.arange(0, 11, 1))
+    plt.yticks(np.arange(0, 8, 1))
     plt.tick_params(
         axis="x",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
@@ -381,10 +384,16 @@ for r in range(14):
         else:
             return str(int(x))
 
+    def cbartick_formatter(x, pos):
+        if x == 0:
+            return ""
+        else:
+            return str(int(x))
+
     ax2.xaxis.set_major_formatter(plt.FuncFormatter(xtick_formatter))
 
     ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
-    b = ax3.hist(data.iloc[:, 0], bins=71, range=[-0.5, 70.5], color="#c5d5db")
+    b = ax3.hist(data.iloc[:, 0], bins=43, range=[-0.5, 42.5], color="#c5d5db")
     plt.setp(ax3.get_xticklabels(), visible=True)
     plt.ylim(0, 65)
     ax3.axvline(data.iloc[:, 0].mean(), color="k", linestyle="dashed", linewidth=0.5)
@@ -409,9 +418,15 @@ for r in range(14):
     ax3.yaxis.set_major_formatter(plt.FuncFormatter(ytick_formatter))
 
     cbar = plt.colorbar(ax=ax2)
+    # cbar = plt.colorbar(ticks=[0, 20, 40, 60 ,80 ,100])
+    cbar.set_ticklabels(
+        ["", "20", "40", "60", "80", "100"]
+    )  # vertically oriented colorbar
     cbar.set_label("[%]")
 
     plt.savefig("./figures/lymph_invest_hist2dnorm" + colname + "_OC.png")
+
+    plt.close()
 
 # wrong!!!: need to change data file as it does not differentiate between no information because of not resected or resected together with other levels
 # influence of number of positive lymph node levels in level 2 on the percentage of involved patients in level 3
@@ -542,3 +557,13 @@ ax6.axis("off")
 
 # Show the figure
 plt.savefig("./figures/lymph_invest_hist2ds_combined_OC.png")
+
+"""
+#linear regression pos lymph nodes ~ invested lymph node
+for r in range(14):
+    data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
+    X = data.iloc[:,0]
+    y = data.iloc[:,1]
+    reg = LinearRegression().fit(X, y)
+    reg.coef_
+"""
