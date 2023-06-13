@@ -10,6 +10,7 @@ import statsmodels.api as sm
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.gridspec import GridSpec
 from matplotlib.image import imread
+from statsmodels.stats.proportion import proportions_ztest
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
 OUTPUT_DIR = Path("./figures")
@@ -595,3 +596,34 @@ for r in range(14):
     intercept, slope = result.params
     print(lm.summary())
 """
+
+# proportions_ztest
+# level I
+count = np.array([30, 43])
+nobs = np.array([213, 135])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv I = {0:0.6f}".format(pval))
+
+# level I
+count = np.array([48, 51])
+nobs = np.array([213, 135])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv II = {0:0.6f}".format(pval))
+
+# level III
+count = np.array([24, 19])
+nobs = np.array([213, 135])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv III = {0:0.6f}".format(pval))
+
+# level I, depending on involvement of level II
+count = np.array([33, 40])
+nobs = np.array([99, 249])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv I, depending on lv II involvement = {0:0.6f}".format(pval))
+
+# level III, depending on involvement of level II
+count = np.array([25, 18])
+nobs = np.array([99, 249])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv III, depending on lv II involvement = {0:0.6f}".format(pval))
