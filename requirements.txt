@@ -5,6 +5,7 @@ lyscripts ~= 0.6
 dvc ~= 2.51
 scikit-learn ~= 1.2
 statsmodels ~= 0.14
+scipy ~= 1.10
 black ~= 23.3
 pylint ~= 2.17
 pre-commit ~= 3.3
