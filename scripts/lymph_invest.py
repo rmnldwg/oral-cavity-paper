@@ -597,14 +597,14 @@ for r in range(14):
     print(lm.summary())
 """
 
-# proportions_ztest
+# proportions_ztest ipsilateral
 # level I
 count = np.array([30, 43])
 nobs = np.array([213, 135])
 stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
 print("p-value lv I = {0:0.6f}".format(pval))
 
-# level I
+# level II
 count = np.array([48, 51])
 nobs = np.array([213, 135])
 stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
@@ -627,3 +627,22 @@ count = np.array([25, 18])
 nobs = np.array([99, 249])
 stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
 print("p-value lv III, depending on lv II involvement = {0:0.6f}".format(pval))
+
+# proportions_ztest contralateral
+# level I, baseline compared to midline extension
+count = np.array([23, 6])
+nobs = np.array([348, 33])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv I, depending on midext = {0:0.6f}".format(pval))
+
+# level II, baseline compared to midline extension
+count = np.array([15, 2])
+nobs = np.array([348, 33])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv II, depending on midext = {0:0.6f}".format(pval))
+
+# level III, baseline compared to midline extension
+count = np.array([10, 1])
+nobs = np.array([348, 33])
+stat, pval = proportions_ztest(count, nobs, alternative="two-sided")
+print("p-value lv III, depending on midext = {0:0.6f}".format(pval))
