@@ -5,22 +5,22 @@ stages:
       --output data/joined.csv\n"
     deps:
     - path: data/2023-clb-multisite.csv
-      md5: c314b7b65b23b6dd5c0ac4e51b3646ca
-      size: 120291
+      md5: 5de121d6d64e39c251a860f47a153e75
+      size: 123834
     - path: data/2023-isb-multisite.csv
-      md5: 8c482844201ea636d956acf397a2a73e
-      size: 184432
+      md5: 79dd72d92f6a1817f98fbc406d139ae9
+      size: 188268
     outs:
     - path: data/joined.csv
-      md5: c9cfcba080bcbdb62e669dd91a8fa45e
-      size: 357907
+      md5: 23f691417041b7432c4fa7300155200d
+      size: 358593
   enhance:
     cmd: "lyscripts data enhance data/joined.csv data/enhanced.csv --modalities CT
       MRI PET FNA diagnostic_consensus pathology pCT\n"
     deps:
     - path: data/joined.csv
-      md5: c9cfcba080bcbdb62e669dd91a8fa45e
-      size: 357907
+      md5: 23f691417041b7432c4fa7300155200d
+      size: 358593
     params:
       params.yaml:
         modalities:
@@ -50,8 +50,8 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: d618f3a4572c5efec62c0038110eac35
-      size: 458572
+      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      size: 459258
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
@@ -72,9 +72,9 @@ stages:
       md5: 8f2f11ed8419c435154e665ba6f6d00a
       size: 794
     - path: figures
-      md5: ce1887ba76ebe5f905af6f3e1d7ab256.dir
-      size: 346383
-      nfiles: 5
+      md5: bee2e38609702ab40c6018d79f3e1eb6.dir
+      size: 405948
+      nfiles: 6
     - path: tables
       md5: 95b7270b3529e18520b117d6b8ec3a71.dir
       size: 902
@@ -96,8 +96,8 @@ stages:
     cmd: "python scripts/contra_involvement.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: d618f3a4572c5efec62c0038110eac35
-      size: 458572
+      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      size: 459258
     - path: scripts/contra_involvement.py
       md5: 686dbabbd13bea735d4105d3623f0467
       size: 1689
@@ -109,21 +109,21 @@ stages:
     cmd: "python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: d618f3a4572c5efec62c0038110eac35
-      size: 458572
+      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      size: 459258
     - path: scripts/statistics.py
       md5: a6f04e8371cde2665ddd0598ecab9227
       size: 10914
     outs:
     - path: figures/statistics.png
-      md5: ba7d8e3152a3ed5bcc02fead90c9e047
-      size: 219797
+      md5: 7484edd71c94b2dbbe6561955f172ed6
+      size: 221932
   figures@venn_diagram:
     cmd: "python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: d618f3a4572c5efec62c0038110eac35
-      size: 458572
+      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      size: 459258
     - path: scripts/venn_diagram.py
       md5: 70f7fffb093619080a8f7f469e397f1f
       size: 1911
@@ -135,8 +135,8 @@ stages:
     cmd: "python scripts/ece_data.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: d618f3a4572c5efec62c0038110eac35
-      size: 458572
+      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      size: 459258
     - path: scripts/ece_data.py
       md5: 3fe6b4d1ee3bad3a594b695a22554303
       size: 1381
@@ -163,3 +163,16 @@ stages:
     - path: figures/confusionmat_lymphsize_hist.png
       md5: f13f2be6a0bd64cf081e07465befc5b1
       size: 53804
+  figures@ece_stacked_bar:
+    cmd: "python scripts/ece_stacked_bar.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      size: 459258
+    - path: scripts/ece_stacked_bar.py
+      md5: 0acaa22d0cee61067329e79a08ab3661
+      size: 4630
+    outs:
+    - path: figures/ece_stacked_bar.png
+      md5: 3a548c600841593e852b2133b504d841
+      size: 59511

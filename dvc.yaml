@@ -37,6 +37,7 @@ stages:
       - statistics
       - venn_diagram
       - lymph_invest
+      - ece_stacked_bar
     do:
       deps:
         - data/enhanced.csv
