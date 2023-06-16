@@ -130,26 +130,6 @@ data_raw[("positive_dissected", "ipsi + contra", "Ia")] = (
     data_raw[("positive_dissected", "ipsi", "Ia")]
     + data_raw[("positive_dissected", "contra", "Ia")]
 )
-data_raw[("total_dissected", "ipsi", "Ib-III")] = (
-    data_raw[("total_dissected", "ipsi", "Ib")]
-    + data_raw[("total_dissected", "ipsi", "II")]
-    + data_raw[("total_dissected", "ipsi", "III")]
-)
-data_raw[("positive_dissected", "ipsi", "Ib-III")] = (
-    data_raw[("positive_dissected", "ipsi", "Ib")]
-    + data_raw[("positive_dissected", "ipsi", "II")]
-    + data_raw[("total_dissected", "ipsi", "III")]
-)
-data_raw[("total_dissected", "contra", "Ib-III")] = (
-    data_raw[("total_dissected", "contra", "Ib")]
-    + data_raw[("total_dissected", "contra", "II")]
-    + data_raw[("total_dissected", "contra", "III")]
-)
-data_raw[("positive_dissected", "contra", "Ib-III")] = (
-    data_raw[("positive_dissected", "contra", "Ib")]
-    + data_raw[("positive_dissected", "contra", "II")]
-    + data_raw[("total_dissected", "contra", "III")]
-)
 
 # 2D histogram with number of positive and investigated lymph
 colnames = [
@@ -182,8 +162,8 @@ levels = [
     "IV",
     "V",
     "V",
-    "Ib-III",
-    "Ib-III",
+    "Ib_to_III",
+    "Ib_to_III",
 ]
 
 sides = [

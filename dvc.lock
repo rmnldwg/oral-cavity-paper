@@ -72,9 +72,9 @@ stages:
       md5: 8f2f11ed8419c435154e665ba6f6d00a
       size: 794
     - path: figures
-      md5: bee2e38609702ab40c6018d79f3e1eb6.dir
-      size: 405948
-      nfiles: 6
+      md5: 04311cd264767433649004989c70c841.dir
+      size: 8821360
+      nfiles: 97
     - path: tables
       md5: 95b7270b3529e18520b117d6b8ec3a71.dir
       size: 902
@@ -96,7 +96,7 @@ stages:
     cmd: "python scripts/contra_involvement.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
     - path: scripts/contra_involvement.py
       md5: 686dbabbd13bea735d4105d3623f0467
@@ -135,7 +135,7 @@ stages:
     cmd: "python scripts/ece_data.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
     - path: scripts/ece_data.py
       md5: 3fe6b4d1ee3bad3a594b695a22554303
@@ -167,12 +167,21 @@ stages:
     cmd: "python scripts/ece_stacked_bar.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
     - path: scripts/ece_stacked_bar.py
       md5: 0acaa22d0cee61067329e79a08ab3661
       size: 4630
     outs:
     - path: figures/ece_stacked_bar.png
-      md5: 3a548c600841593e852b2133b504d841
-      size: 59511
+      md5: 22433cb1217d34d9201054a2adfd46ce
+      size: 58960
+  figures_lymph_invest@lymph_invest:
+    cmd: "python scripts/lymph_invest.py\n"
+    deps:
+    - path: data/enhanced.csv
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
+      size: 459258
+    - path: scripts/lymph_invest.py
+      md5: a5e1b32fe35393ae9eeba6964cf3e19e
+      size: 20061

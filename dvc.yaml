@@ -36,7 +36,6 @@ stages:
     foreach:
       - statistics
       - venn_diagram
-      - lymph_invest
       - ece_stacked_bar
     do:
       deps:
@@ -46,6 +45,16 @@ stages:
         python scripts/${item}.py
       outs:
         - figures/${item}.png
+
+  figures_lymph_invest:
+    foreach:
+      - lymph_invest
+    do:
+      deps:
+        - data/enhanced.csv
+        - scripts/${item}.py
+      cmd: >
+        python scripts/${item}.py
 
   tables:
     foreach:
