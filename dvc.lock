@@ -50,7 +50,7 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
@@ -109,20 +109,20 @@ stages:
     cmd: "python scripts/statistics.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
     - path: scripts/statistics.py
       md5: a6f04e8371cde2665ddd0598ecab9227
       size: 10914
     outs:
     - path: figures/statistics.png
-      md5: 7484edd71c94b2dbbe6561955f172ed6
-      size: 221932
+      md5: ba7d8e3152a3ed5bcc02fead90c9e047
+      size: 219797
   figures@venn_diagram:
     cmd: "python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 6e4994dd0d3a7c18eb31fd61ae32a79b
+      md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
     - path: scripts/venn_diagram.py
       md5: 70f7fffb093619080a8f7f469e397f1f

@@ -66,7 +66,7 @@ halfGray_halfGreenToRed = ListedColormap(tmp)
 
 data_raw, _ = load_and_prepare_data(filepath=DATAFILE, lnls=["I", "II", "III"])
 
-header1_pos = "total_positive"
+header1_pos = "positive_dissected"
 header1_inv = "total_dissected"
 header2 = "ipsi"
 header3 = ["Ib", "II", "III", "IV", "V"]
@@ -126,18 +126,18 @@ data_raw[("total_dissected", "ipsi + contra", "Ia")] = (
     data_raw[("total_dissected", "ipsi", "Ia")]
     + data_raw[("total_dissected", "contra", "Ia")]
 )
-data_raw[("total_positive", "ipsi + contra", "Ia")] = (
-    data_raw[("total_positive", "ipsi", "Ia")]
-    + data_raw[("total_positive", "contra", "Ia")]
+data_raw[("positive_dissected", "ipsi + contra", "Ia")] = (
+    data_raw[("positive_dissected", "ipsi", "Ia")]
+    + data_raw[("positive_dissected", "contra", "Ia")]
 )
 data_raw[("total_dissected", "ipsi", "Ib-III")] = (
     data_raw[("total_dissected", "ipsi", "Ib")]
     + data_raw[("total_dissected", "ipsi", "II")]
     + data_raw[("total_dissected", "ipsi", "III")]
 )
-data_raw[("total_positive", "ipsi", "Ib-III")] = (
-    data_raw[("total_positive", "ipsi", "Ib")]
-    + data_raw[("total_positive", "ipsi", "II")]
+data_raw[("positive_dissected", "ipsi", "Ib-III")] = (
+    data_raw[("positive_dissected", "ipsi", "Ib")]
+    + data_raw[("positive_dissected", "ipsi", "II")]
     + data_raw[("total_dissected", "ipsi", "III")]
 )
 data_raw[("total_dissected", "contra", "Ib-III")] = (
@@ -145,9 +145,9 @@ data_raw[("total_dissected", "contra", "Ib-III")] = (
     + data_raw[("total_dissected", "contra", "II")]
     + data_raw[("total_dissected", "contra", "III")]
 )
-data_raw[("total_positive", "contra", "Ib-III")] = (
-    data_raw[("total_positive", "contra", "Ib")]
-    + data_raw[("total_positive", "contra", "II")]
+data_raw[("positive_dissected", "contra", "Ib-III")] = (
+    data_raw[("positive_dissected", "contra", "Ib")]
+    + data_raw[("positive_dissected", "contra", "II")]
     + data_raw[("total_dissected", "contra", "III")]
 )
 
@@ -205,7 +205,7 @@ sides = [
 for r in range(14):
     # data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
 
-    header1 = ["total_dissected", "total_positive"]
+    header1 = ["total_dissected", "positive_dissected"]
     header2 = sides[r]
     header3 = levels[r]
 
@@ -321,7 +321,7 @@ for r in range(14):
 for r in range(14):
     # data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
 
-    header1 = ["total_dissected", "total_positive"]
+    header1 = ["total_dissected", "positive_dissected"]
     header2 = sides[r]
     header3 = levels[r]
 
