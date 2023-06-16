@@ -14,7 +14,7 @@ from matplotlib.image import imread
 from shared import DATAFILE, MPLSTYLE, load_and_prepare_data
 from statsmodels.stats.proportion import proportions_ztest
 
-OUTPUT_NAME = Path(__file__).with_suffix(".png").name
+# OUTPUT_NAME = Path(__file__).with_suffix(".png").name
 OUTPUT_DIR = Path("./figures")
 MPLSTYLE = Path("./scripts/.mplstyle")
 
@@ -119,7 +119,7 @@ lines2, labels2 = ax2.get_legend_handles_labels()
 ax2.legend(lines + lines2, labels + labels2, loc=0)
 plt.title("Number of lymph nodes investigated/involved per level")
 
-plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
+plt.savefig("./figures/lymph_invest_hist_OC.png")
 
 
 data_raw[("total_dissected", "ipsi + contra", "Ia")] = (
