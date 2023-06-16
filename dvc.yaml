@@ -36,6 +36,7 @@ stages:
     foreach:
       - statistics
       - venn_diagram
+      - lymph_invest
     do:
       deps:
         - data/enhanced.csv

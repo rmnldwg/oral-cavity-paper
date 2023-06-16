@@ -7,9 +7,11 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import statsmodels.api as sm
+from lyscripts.plot.histograms import get_size
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.gridspec import GridSpec
 from matplotlib.image import imread
+from shared import DATAFILE, MPLSTYLE, load_and_prepare_data
 from statsmodels.stats.proportion import proportions_ztest
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
@@ -62,38 +64,15 @@ tmp = tmp(np.linspace(0.0, 1.0, 128))
 tmp = np.vstack([np.array([gray_rgba] * 128), tmp])
 halfGray_halfGreenToRed = ListedColormap(tmp)
 
+data_raw, _ = load_and_prepare_data(filepath=DATAFILE, lnls=["I", "II", "III"])
 
-def set_size(width="single", unit="cm", ratio="golden"):
-    if width == "single":
-        width = 10
-    elif width == "full":
-        width = 16
-    else:
-        try:
-            width = width
-        except:
-            width = 10
+header1_pos = "total_positive"
+header1_inv = "total_dissected"
+header2 = "ipsi"
+header3 = ["Ib", "II", "III", "IV", "V"]
 
-    if unit == "cm":
-        width = width / 2.54
-
-    if ratio == "golden":
-        ratio = 1.618
-    else:
-        ratio = ratio
-
-    try:
-        height = width / ratio
-    except:
-        height = width / 1.618
-
-    return (width, height)
-
-
-data_raw = pd.read_csv("./data/lymph_nodes_invest_OC.csv", sep=";")
-
-plot_data_pos = data_raw.iloc[:, [7, 11, 15, 19, 23]]
-plot_data_inv = data_raw.iloc[:, [6, 10, 14, 18, 22]]
+plot_data_inv = data_raw.loc[:, (header1_inv, header2, header3)]
+plot_data_pos = data_raw.loc[:, (header1_pos, header2, header3)]
 
 plt.style.use(MPLSTYLE)
 
@@ -104,7 +83,7 @@ plt.xticks(POSITIONS, LABELS)
 plt.legend()$
 """
 
-fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
+fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
 ax1 = fig.add_subplot(111)
 # instantiate a second axes that shares the same x-axis
 a = ax1.bar(
@@ -142,6 +121,36 @@ plt.title("Number of lymph nodes investigated/involved per level")
 
 plt.savefig(OUTPUT_DIR / "lymph_invest_hist_OC.png")
 
+
+data_raw[("total_dissected", "ipsi + contra", "Ia")] = (
+    data_raw[("total_dissected", "ipsi", "Ia")]
+    + data_raw[("total_dissected", "contra", "Ia")]
+)
+data_raw[("total_positive", "ipsi + contra", "Ia")] = (
+    data_raw[("total_positive", "ipsi", "Ia")]
+    + data_raw[("total_positive", "contra", "Ia")]
+)
+data_raw[("total_dissected", "ipsi", "Ib-III")] = (
+    data_raw[("total_dissected", "ipsi", "Ib")]
+    + data_raw[("total_dissected", "ipsi", "II")]
+    + data_raw[("total_dissected", "ipsi", "III")]
+)
+data_raw[("total_positive", "ipsi", "Ib-III")] = (
+    data_raw[("total_positive", "ipsi", "Ib")]
+    + data_raw[("total_positive", "ipsi", "II")]
+    + data_raw[("total_dissected", "ipsi", "III")]
+)
+data_raw[("total_dissected", "contra", "Ib-III")] = (
+    data_raw[("total_dissected", "contra", "Ib")]
+    + data_raw[("total_dissected", "contra", "II")]
+    + data_raw[("total_dissected", "contra", "III")]
+)
+data_raw[("total_positive", "contra", "Ib-III")] = (
+    data_raw[("total_positive", "contra", "Ib")]
+    + data_raw[("total_positive", "contra", "II")]
+    + data_raw[("total_dissected", "contra", "III")]
+)
+
 # 2D histogram with number of positive and investigated lymph
 colnames = [
     "Ia ipsi",
@@ -160,11 +169,50 @@ colnames = [
     "Ib-III contra",
 ]
 
+levels = [
+    "Ia",
+    "Ia",
+    "Ib",
+    "Ib",
+    "II",
+    "II",
+    "III",
+    "III",
+    "IV",
+    "IV",
+    "V",
+    "V",
+    "Ib-III",
+    "Ib-III",
+]
+
+sides = [
+    "ipsi",
+    "ipsi + contra",
+    "ipsi",
+    "contra",
+    "ipsi",
+    "contra",
+    "ipsi",
+    "contra",
+    "ipsi",
+    "contra",
+    "ipsi",
+    "contra",
+    "ipsi",
+    "contra",
+]
 for r in range(14):
-    data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
+    # data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
+
+    header1 = ["total_dissected", "total_positive"]
+    header2 = sides[r]
+    header3 = levels[r]
+
+    data = data_raw.loc[:, (header1, header2, header3)].dropna()
     colname = colnames[r]
 
-    fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
+    fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
     spec = GridSpec(
         ncols=2,
         nrows=2,
@@ -270,25 +318,14 @@ for r in range(14):
     plt.savefig("./figures/lymph_invest_hist2d" + colname + "_OC.png")
 
 # normalized 2D histogram with number of positive and investigated lymph
-colnames = [
-    "Ia ipsi",
-    "Ia",
-    "Ib ipsi",
-    "Ib contra",
-    "II ipsi",
-    "II contra",
-    "III ipsi",
-    "III contra",
-    "IV ipsi",
-    "IV contra",
-    "V ipsi",
-    "V contra",
-    "Ib-III ipsi",
-    "Ib-III contra",
-]
-
 for r in range(14):
-    data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
+    # data = data_raw.iloc[:, [2 + 2 * r, 3 + 2 * r]].dropna()
+
+    header1 = ["total_dissected", "total_positive"]
+    header2 = sides[r]
+    header3 = levels[r]
+
+    data = data_raw.loc[:, (header1, header2, header3)].dropna()
     colname = colnames[r]
 
     # linear regression
@@ -301,7 +338,7 @@ for r in range(14):
     pval = lm.pvalues[1]
     print(lm.summary())
 
-    fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
+    fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
     spec = GridSpec(
         ncols=2,
         nrows=2,
@@ -353,6 +390,7 @@ for r in range(14):
     ax.collections[1].set_label("95% Confidence interval")
     plt.legend(fontsize="xx-small", loc="upper left")
     plt.grid(False)
+    plt.xlabel("")
     plt.title(colname + " (n=" + str(len(data)) + ")")
     plt.yticks(np.arange(0, 8, 1))
     plt.tick_params(
@@ -454,6 +492,7 @@ for r in range(14):
 
     plt.close()
 
+"""
 # wrong!!!: need to change data file as it does not differentiate between no information because of not resected or resected together with other levels
 # influence of number of positive lymph node levels in level 2 on the percentage of involved patients in level 3
 ipsiII_pos = data_raw.iloc[:, [3 + 2 * 4]].fillna(-1)
@@ -484,7 +523,7 @@ for i, width in enumerate(WIDTHS):
     POSITIONS[i] = spaces + widths
 
 
-fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
+fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
 ax1 = fig.add_subplot(111)
 # instantiate a second axes that shares the same x-axis
 a = ax1.bar(
@@ -530,9 +569,12 @@ for p in a.patches:
         j += 1
 
 plt.savefig("./figures/II_III_corr_OC.png")
+"""
 
+"""
+#anpassen, da in enhanced.csv nicht Info für alle lymph nodes enthalten ist
 # boxplot for the number of investigated lymph nodes
-fig = plt.figure(figsize=set_size(width="full", ratio=1.8), constrained_layout=True)
+fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
 ax = fig.add_subplot(111)
 
 
@@ -540,6 +582,7 @@ b = ax.boxplot(data_raw["total invest"])
 ax.set_ylabel("number of lymph nodes")
 
 plt.savefig("./figures/investigated_LN_OC.png")
+"""
 
 # generate the plot with the 2d histograms as subplots
 # Load the image files
@@ -553,7 +596,7 @@ image6 = imread("./figures/lymph_invest_hist_OC.png")
 
 # Create a new figure
 fig = plt.figure(
-    figsize=set_size(width="full", ratio=1.2), constrained_layout=True, dpi=1000
+    figsize=get_size(width="full", ratio=1.2), constrained_layout=True, dpi=1000
 )
 
 # Add subplots and display images

@@ -122,15 +122,15 @@ stages:
     cmd: "python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
-      md5: 77c2b4c7b8f4ce606b3b519c95ca7a94
+      md5: d618f3a4572c5efec62c0038110eac35
       size: 458572
     - path: scripts/venn_diagram.py
       md5: 70f7fffb093619080a8f7f469e397f1f
       size: 1911
     outs:
     - path: figures/venn_diagram.png
-      md5: 3f6e8fb6fdbab05a73a9f101d578a4b4
-      size: 77280
+      md5: bc51c8feadba570c14609f7a28af8f88
+      size: 77344
   tables@ece_data:
     cmd: "python scripts/ece_data.py\n"
     deps:
