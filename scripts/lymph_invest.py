@@ -203,17 +203,28 @@ for r in range(14):
     ax = fig.add_subplot(spec[0, 0])
 
     # instantiate a second axes that shares the same x-axis
-    hist = plt.hist2d(
-        data.iloc[:, 0],
-        data.iloc[:, 1],
-        range=[(-0.5, 42.5), (-0.5, 7.5)],
-        bins=(43, 8),
-        cmap=green_to_red_modified,
-    )
+    if levels[r] == "Ib_to_III":
+        hist = plt.hist2d(
+            data.iloc[:, 0],
+            data.iloc[:, 1],
+            range=[(-0.5, 70.5), (-0.5, 10.5)],
+            bins=(71, 11),
+            cmap=green_to_red_modified,
+        )
+        plt.yticks(np.arange(0, 11, 1))
+
+    else:
+        hist = plt.hist2d(
+            data.iloc[:, 0],
+            data.iloc[:, 1],
+            range=[(-0.5, 42.5), (-0.5, 7.5)],
+            bins=(43, 8),
+            cmap=green_to_red_modified,
+        )
+        plt.yticks(np.arange(0, 8, 1))
 
     plt.grid(False)
     plt.title(colname + " (n=" + str(len(data)) + ")")
-    plt.yticks(np.arange(0, 8, 1))
     plt.tick_params(
         axis="x",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
@@ -238,14 +249,26 @@ for r in range(14):
                     fontsize="x-small",
                 )
 
-    ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
-    ax2.hist(
-        data.iloc[:, 1],
-        orientation="horizontal",
-        bins=8,
-        range=[-0.5, 7.5],
-        color="#c5d5db",
-    )
+    if levels[r] == "Ib_to_III":
+        ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
+        ax2.hist(
+            data.iloc[:, 1],
+            orientation="horizontal",
+            bins=11,
+            range=[-0.5, 10.5],
+            color="#c5d5db",
+        )
+
+    else:
+        ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
+        ax2.hist(
+            data.iloc[:, 1],
+            orientation="horizontal",
+            bins=8,
+            range=[-0.5, 7.5],
+            color="#c5d5db",
+        )
+
     plt.setp(ax2.get_yticklabels(), visible=False)
     plt.xlim(0, 300)
     plt.axhline(data.iloc[:, 1].mean(), color="k", linestyle="dashed", linewidth=0.5)
@@ -269,8 +292,14 @@ for r in range(14):
 
     ax2.xaxis.set_major_formatter(plt.FuncFormatter(xtick_formatter))
 
-    ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
-    b = ax3.hist(data.iloc[:, 0], bins=43, range=[-0.5, 42.5], color="#c5d5db")
+    if levels[r] == "Ib_to_III":
+        ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
+        b = ax3.hist(data.iloc[:, 0], bins=71, range=[-0.5, 70.5], color="#c5d5db")
+
+    else:
+        ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
+        b = ax3.hist(data.iloc[:, 0], bins=43, range=[-0.5, 42.5], color="#c5d5db")
+
     plt.setp(ax3.get_xticklabels(), visible=True)
     plt.ylim(0, 65)
     ax3.axvline(data.iloc[:, 0].mean(), color="k", linestyle="dashed", linewidth=0.5)
@@ -327,12 +356,21 @@ for r in range(14):
     )
 
     ax = fig.add_subplot(spec[0, 0])
-    combinations = np.zeros((43, 8))
-    for i in range(combinations.shape[0]):
-        for j in range(combinations.shape[1]):
-            combinations[i, j] = len(
-                data[(data.iloc[:, 0] == i) & (data.iloc[:, 1] == j)]
-            )
+    if levels[r] == "Ib_to_III":
+        combinations = np.zeros((71, 11))
+        for i in range(combinations.shape[0]):
+            for j in range(combinations.shape[1]):
+                combinations[i, j] = len(
+                    data[(data.iloc[:, 0] == i) & (data.iloc[:, 1] == j)]
+                )
+
+    else:
+        combinations = np.zeros((43, 8))
+        for i in range(combinations.shape[0]):
+            for j in range(combinations.shape[1]):
+                combinations[i, j] = len(
+                    data[(data.iloc[:, 0] == i) & (data.iloc[:, 1] == j)]
+                )
 
     histmatrixnorm = combinations
     for i in range(combinations.shape[0]):
@@ -346,14 +384,27 @@ for r in range(14):
     x_indices, y_indices = np.indices(histmatrixnorm.shape)
 
     # instantiate a second axes that shares the same x-axis
-    hist = plt.hist2d(
-        x_indices.flatten(),
-        y_indices.flatten(),
-        weights=histmatrixnorm.flatten(),
-        range=[(-0.5, 42.5), (-0.5, 7.5)],
-        bins=(43, 8),
-        cmap=green_to_red_modified,
-    )
+    if levels[r] == "Ib_to_III":
+        hist = plt.hist2d(
+            x_indices.flatten(),
+            y_indices.flatten(),
+            weights=histmatrixnorm.flatten(),
+            range=[(-0.5, 70.5), (-0.5, 10.5)],
+            bins=(71, 11),
+            cmap=green_to_red_modified,
+        )
+        plt.yticks(np.arange(0, 11, 1))
+
+    else:
+        hist = plt.hist2d(
+            x_indices.flatten(),
+            y_indices.flatten(),
+            weights=histmatrixnorm.flatten(),
+            range=[(-0.5, 42.5), (-0.5, 7.5)],
+            bins=(43, 8),
+            cmap=green_to_red_modified,
+        )
+        plt.yticks(np.arange(0, 8, 1))
 
     # plt.plot(x, intercept + slope * x, color='black', linewidth=1, linestyle='--')
     sns.regplot(
@@ -371,7 +422,6 @@ for r in range(14):
     plt.grid(False)
     plt.xlabel("")
     plt.title(colname + " (n=" + str(len(data)) + ")")
-    plt.yticks(np.arange(0, 8, 1))
     plt.tick_params(
         axis="x",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
@@ -398,14 +448,26 @@ for r in range(14):
                     rotation="vertical",
                 )
 
-    ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
-    ax2.hist(
-        data.iloc[:, 1],
-        orientation="horizontal",
-        bins=8,
-        range=[-0.5, 7.5],
-        color="#c5d5db",
-    )
+    if levels[r] == "Ib_to_III":
+        ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
+        ax2.hist(
+            data.iloc[:, 1],
+            orientation="horizontal",
+            bins=11,
+            range=[-0.5, 10.5],
+            color="#c5d5db",
+        )
+
+    else:
+        ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
+        ax2.hist(
+            data.iloc[:, 1],
+            orientation="horizontal",
+            bins=8,
+            range=[-0.5, 7.5],
+            color="#c5d5db",
+        )
+
     plt.setp(ax2.get_yticklabels(), visible=False)
     plt.xlim(0, 300)
     plt.axhline(data.iloc[:, 1].mean(), color="k", linestyle="dashed", linewidth=0.5)
@@ -435,8 +497,14 @@ for r in range(14):
 
     ax2.xaxis.set_major_formatter(plt.FuncFormatter(xtick_formatter))
 
-    ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
-    b = ax3.hist(data.iloc[:, 0], bins=43, range=[-0.5, 42.5], color="#c5d5db")
+    if levels[r] == "Ib_to_III":
+        ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
+        b = ax3.hist(data.iloc[:, 0], bins=71, range=[-0.5, 70.5], color="#c5d5db")
+
+    else:
+        ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
+        b = ax3.hist(data.iloc[:, 0], bins=43, range=[-0.5, 42.5], color="#c5d5db")
+
     plt.setp(ax3.get_xticklabels(), visible=True)
     plt.ylim(0, 65)
     ax3.axvline(data.iloc[:, 0].mean(), color="k", linestyle="dashed", linewidth=0.5)
@@ -572,6 +640,13 @@ image4 = imread("./figures/lymph_invest_hist2dIV ipsi_OC.png")
 image5 = imread("./figures/lymph_invest_hist2dV ipsi_OC.png")
 image6 = imread("./figures/lymph_invest_hist_OC.png")
 
+image11 = imread("./figures/lymph_invest_hist2dnormIb ipsi_OC.png")
+image22 = imread("./figures/lymph_invest_hist2dnormII ipsi_OC.png")
+image33 = imread("./figures/lymph_invest_hist2dnormIII ipsi_OC.png")
+image44 = imread("./figures/lymph_invest_hist2dnormIV ipsi_OC.png")
+image55 = imread("./figures/lymph_invest_hist2dnormV ipsi_OC.png")
+image66 = imread("./figures/lymph_invest_hist_OC.png")
+
 
 # Create a new figure
 fig = plt.figure(
@@ -605,3 +680,35 @@ ax6.axis("off")
 
 # Show the figure
 plt.savefig("./figures/lymph_invest_hist2ds_combined_OC.png")
+
+fig = plt.figure(
+    figsize=get_size(width="full", ratio=1.2), constrained_layout=True, dpi=1000
+)
+
+# Add subplots and display images
+ax1 = fig.add_subplot(3, 2, 1)
+ax1.imshow(image11)
+ax1.axis("off")
+
+ax2 = fig.add_subplot(3, 2, 2)
+ax2.imshow(image22)
+ax2.axis("off")
+
+ax3 = fig.add_subplot(3, 2, 3)
+ax3.imshow(image33)
+ax3.axis("off")
+
+ax4 = fig.add_subplot(3, 2, 4)
+ax4.imshow(image44)
+ax4.axis("off")
+
+ax5 = fig.add_subplot(3, 2, 5)
+ax5.imshow(image55)
+ax5.axis("off")
+
+ax6 = fig.add_subplot(3, 2, 6)
+ax6.imshow(image66)
+ax6.axis("off")
+
+# Show the figure
+plt.savefig("./figures/lymph_invest_hist2dsnorm_combined_OC.png")
