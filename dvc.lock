@@ -82,9 +82,6 @@ stages:
       md5: bee2e38609702ab40c6018d79f3e1eb6.dir
       size: 405948
       nfiles: 6
-      md5: 8ce1b235adbda8ff3c134120bfe674be.dir
-      size: 10236803
-      nfiles: 80
     - path: tables
       hash: md5
       md5: 95b7270b3529e18520b117d6b8ec3a71.dir
