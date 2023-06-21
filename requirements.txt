@@ -1,11 +1,12 @@
-matplotlib ~= 3.7
-matplotlib-venn ~= 0.11
 numpy ~= 1.24
-lyscripts ~= 0.6
-dvc ~= 2.51
+scipy ~= 1.10
 scikit-learn ~= 1.2
 statsmodels ~= 0.14
-scipy ~= 1.10
+lyscripts ~= 0.6
+dvc ~= 3.1
+matplotlib ~= 3.7
+matplotlib-venn ~= 0.11
+seaborn ~= 0.12
 black ~= 23.3
 pylint ~= 2.17
 pre-commit ~= 3.3

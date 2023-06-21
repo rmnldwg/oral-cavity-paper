@@ -20,17 +20,14 @@ stages:
       This stage fixes the super- and sub-level reporting for the LNLs and also creates
       new 'modalities' from combining existing ones, e.g. using the logical AND or
       estimating the most likely involvement based on the observations only.
-    vars:
-      - input: data/joined.csv
-      - output: data/enhanced.csv
     cmd: >
-      lyscripts data enhance ${input} ${output} ${data_cleaning_modalities}
+      lyscripts data enhance data/joined.csv data/enhanced.csv ${data_cleaning_modalities}
     deps:
-      - ${input}
+      - data/joined.csv
     params:
       - modalities
     outs:
-      - ${output}
+      - data/enhanced.csv
 
   figures:
     foreach:
