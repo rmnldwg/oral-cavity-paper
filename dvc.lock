@@ -54,8 +54,7 @@ stages:
           - 1.0
     outs:
     - path: data/enhanced.csv
-      hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
@@ -79,9 +78,9 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: bee2e38609702ab40c6018d79f3e1eb6.dir
-      size: 405948
-      nfiles: 6
+      md5: 28bf99bbdf1d5c29f60448775164cc07.dir
+      size: 10200909
+      nfiles: 80
     - path: tables
       hash: md5
       md5: 95b7270b3529e18520b117d6b8ec3a71.dir
@@ -105,7 +104,7 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
     - path: scripts/contra_involvement.py
       hash: md5
@@ -121,7 +120,7 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
     - path: scripts/statistics.py
       hash: md5
@@ -130,14 +129,14 @@ stages:
     outs:
     - path: figures/statistics.png
       hash: md5
-      md5: 7484edd71c94b2dbbe6561955f172ed6
-      size: 221932
+      md5: ba7d8e3152a3ed5bcc02fead90c9e047
+      size: 219797
   figures@venn_diagram:
     cmd: "python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
     - path: scripts/venn_diagram.py
       hash: md5
@@ -146,14 +145,14 @@ stages:
     outs:
     - path: figures/venn_diagram.png
       hash: md5
-      md5: 3f6e8fb6fdbab05a73a9f101d578a4b4
-      size: 77280
+      md5: bc51c8feadba570c14609f7a28af8f88
+      size: 77344
   tables@ece_data:
     cmd: "python scripts/ece_data.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
     - path: scripts/ece_data.py
       hash: md5
@@ -188,7 +187,7 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
     - path: scripts/ece_stacked_bar.py
       hash: md5
@@ -197,19 +196,19 @@ stages:
     outs:
     - path: figures/ece_stacked_bar.png
       hash: md5
-      md5: 3a548c600841593e852b2133b504d841
-      size: 59511
+      md5: 22433cb1217d34d9201054a2adfd46ce
+      size: 58960
   figures_lymph_invest@lymph_invest:
     cmd: "python scripts/lymph_invest.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: da0fea48d6fcfc0f9bc3f71c5d3b437e
+      md5: d7419c665c0197979af0c581c4cc98fa
       size: 455224
     - path: scripts/lymph_invest.py
       hash: md5
-      md5: d8f763d9038058f61c292e287fed605f
-      size: 20858
+      md5: e891a4f93abd7dfdcac76ac6aaeb069a
+      size: 20860
   pvalues_lymph_invest@lymph_invest_pvalues:
     cmd: "python scripts/lymph_invest_pvalues.py\n"
     deps:
