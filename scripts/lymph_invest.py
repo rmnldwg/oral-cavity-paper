@@ -344,7 +344,7 @@ for r in range(14):
     lm = sm.OLS(y, x).fit()  # fitting the model
     intercept, slope = lm.params
     pval = lm.pvalues[1]
-    print(lm.summary())
+    # print(lm.summary())
 
     fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
     spec = GridSpec(

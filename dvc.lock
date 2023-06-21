@@ -72,9 +72,9 @@ stages:
       md5: 8f2f11ed8419c435154e665ba6f6d00a
       size: 794
     - path: figures
-      md5: 04311cd264767433649004989c70c841.dir
-      size: 8821360
-      nfiles: 97
+      md5: 8ce1b235adbda8ff3c134120bfe674be.dir
+      size: 10236803
+      nfiles: 80
     - path: tables
       md5: 95b7270b3529e18520b117d6b8ec3a71.dir
       size: 902
@@ -183,5 +183,11 @@ stages:
       md5: 14ae36edd3adc64fa67cdc15a0dee76e
       size: 459258
     - path: scripts/lymph_invest.py
-      md5: a5e1b32fe35393ae9eeba6964cf3e19e
-      size: 20061
+      md5: d8f763d9038058f61c292e287fed605f
+      size: 20858
+  pvalues_lymph_invest@lymph_invest_pvalues:
+    cmd: "python scripts/lymph_invest_pvalues.py\n"
+    deps:
+    - path: scripts/lymph_invest_pvalues.py
+      md5: c8928e42307025aedc9fe9f421955056
+      size: 2702
