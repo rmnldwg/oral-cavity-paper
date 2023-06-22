@@ -418,7 +418,7 @@ for r in range(14):
         label=f"Regression Line (p-value={pval:.2f})",
     )
     ax.collections[1].set_label("95% Confidence interval")
-    plt.legend(fontsize="xx-small", loc="upper left")
+    plt.legend(fontsize="xx-small", loc="upper right")
     plt.grid(False)
     plt.xlabel("")
     plt.title(colname + " (n=" + str(len(data)) + ")")
