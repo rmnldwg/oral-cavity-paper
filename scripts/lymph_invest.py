@@ -5,7 +5,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import statsmodels.api as sm
 from lyscripts.plot.histograms import get_size
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
@@ -336,15 +335,39 @@ for r in range(14):
     data = data_raw.loc[:, (header1, header2, header3)].dropna()
     colname = colnames[r]
 
-    # linear regression
     x = data.iloc[:, 0]
-    x1 = data.iloc[:, 0]
+    mask = x > 0
+    x1 = np.array(x)[mask]
+    x1 = x1.reshape(-1, 1)
+
+    x1 = sm.add_constant(x1, prepend=0.1, has_constant="add")
     y = data.iloc[:, 1]
+    y1 = [1 if num >= 1 else 0 for num in y]
+    y1 = np.array(y1)[mask]
+    # model = sm.GLM(y1, x1, family=sm.families.Logit()).fit()
+    model = sm.Logit(y1, x1).fit()
+    print(model.summary())
+    print(model.pred_table())
+
+    intercept, slope = model.params[0], model.params[1]
+    x_values = np.linspace(np.min(x1[:, 1]), np.max(x1[:, 1]), 100)
+    y_values = 1 / (1 + np.exp(-intercept - slope * x_values))
+    plt.figure()
+    plt.scatter(x1[:, 1], y1)  # Scatter plot of the data points
+    plt.plot(x_values, y_values, color="red", label="Logistic Regression")
+    plt.xlabel("X")
+    plt.ylabel("Probability")
+    plt.legend()
+    plt.savefig("./figures/lymph_invest_lr" + colname + "_OC.png")
+
+    """
+    # linear regression
     x = sm.add_constant(x)  # adding a constant
     lm = sm.OLS(y, x).fit()  # fitting the model
     intercept, slope = lm.params
     pval = lm.pvalues[1]
-    # print(lm.summary())
+    #print(lm.summary())
+    """
 
     fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
     spec = GridSpec(
@@ -406,19 +429,21 @@ for r in range(14):
         )
         plt.yticks(np.arange(0, 8, 1))
 
+    """
     # plt.plot(x, intercept + slope * x, color='black', linewidth=1, linestyle='--')
     sns.regplot(
-        x=x1,
+        x=x,
         y=y,
         ax=ax,
         scatter=False,
         ci=95,
         color="black",
         line_kws={"linewidth": 0.5},
-        label=f"Regression Line (p-value={pval:.2f})",
+        #label=f"Regression Line (p-value={pval:.2f})",
     )
     ax.collections[1].set_label("95% Confidence interval")
     plt.legend(fontsize="xx-small", loc="upper right")
+    """
     plt.grid(False)
     plt.xlabel("")
     plt.title(colname + " (n=" + str(len(data)) + ")")
