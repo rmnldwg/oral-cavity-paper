@@ -10,21 +10,21 @@ stages:
       size: 123938
     - path: data/2023-isb-multisite.csv
       hash: md5
-      md5: d11760c8241e0d1f3e693fe8697aed88
-      size: 188078
+      md5: c3b5e57e4e7e139a630eab6505986b51
+      size: 190110
     outs:
     - path: data/joined.csv
       hash: md5
-      md5: a4534ce7012a610ebd368a1f71db0f12
-      size: 355523
+      md5: 747c69ca353ae2967c3d9fa5d258e6ab
+      size: 359633
   enhance:
     cmd: "lyscripts data enhance data/joined.csv data/enhanced.csv --modalities CT
       MRI PET FNA diagnostic_consensus pathology pCT\n"
     deps:
     - path: data/joined.csv
       hash: md5
-      md5: a4534ce7012a610ebd368a1f71db0f12
-      size: 355523
+      md5: 747c69ca353ae2967c3d9fa5d258e6ab
+      size: 359633
     params:
       params.yaml:
         modalities:
@@ -55,8 +55,8 @@ stages:
     outs:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
@@ -79,8 +79,8 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: 3ad506365c7f44320938e5938e4bd265.dir
-      size: 10230079
+      md5: 3ce90c3268b159540d48a93672d0cb52.dir
+      size: 10229486
       nfiles: 80
     - path: tables
       hash: md5
@@ -105,8 +105,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
     - path: scripts/contra_involvement.py
       hash: md5
       md5: 686dbabbd13bea735d4105d3623f0467
@@ -121,8 +121,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
     - path: scripts/statistics.py
       hash: md5
       md5: a6f04e8371cde2665ddd0598ecab9227
@@ -137,8 +137,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
     - path: scripts/venn_diagram.py
       hash: md5
       md5: 70f7fffb093619080a8f7f469e397f1f
@@ -153,8 +153,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
     - path: scripts/ece_data.py
       hash: md5
       md5: 3fe6b4d1ee3bad3a594b695a22554303
@@ -188,8 +188,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
     - path: scripts/ece_stacked_bar.py
       hash: md5
       md5: 0acaa22d0cee61067329e79a08ab3661
@@ -204,8 +204,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: b32bb87a1298c782bfc18d381169a5c5
-      size: 456188
+      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      size: 460298
     - path: scripts/lymph_invest.py
       hash: md5
       md5: 380dc0b80db059f89fff689853bbfbba
