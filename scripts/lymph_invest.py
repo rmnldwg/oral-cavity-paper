@@ -5,7 +5,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
 from lyscripts.plot.histograms import get_size
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.gridspec import GridSpec
@@ -331,23 +330,30 @@ for r in range(14):
     header1 = ["total_dissected", "positive_dissected"]
     header2 = sides[r]
     header3 = levels[r]
-
     data = data_raw.loc[:, (header1, header2, header3)].dropna()
     colname = colnames[r]
 
+    """
     x = data.iloc[:, 0]
+    y = data.iloc[:, 1]
     mask = x > 0
     x1 = np.array(x)[mask]
     x1 = x1.reshape(-1, 1)
 
+    print("\n\n", header2 + header3, "\n")
     x1 = sm.add_constant(x1, prepend=0.1, has_constant="add")
-    y = data.iloc[:, 1]
     y1 = [1 if num >= 1 else 0 for num in y]
     y1 = np.array(y1)[mask]
     # model = sm.GLM(y1, x1, family=sm.families.Logit()).fit()
     model = sm.Logit(y1, x1).fit()
     print(model.summary())
     print(model.pred_table())
+
+    def test(x, a):
+        return np.exp(a*x)
+
+    param, param_cov = curve_fit(test, xdata=x, ydata=y)
+    print(param)
 
     intercept, slope = model.params[0], model.params[1]
     x_values = np.linspace(np.min(x1[:, 1]), np.max(x1[:, 1]), 100)
@@ -358,15 +364,23 @@ for r in range(14):
     plt.xlabel("X")
     plt.ylabel("Probability")
     plt.legend()
-    plt.savefig("./figures/lymph_invest_lr" + colname + "_OC.png")
+    plt.savefig("./figures/lymph_invest_logr" + colname + "_OC.png")
 
-    """
+
     # linear regression
-    x = sm.add_constant(x)  # adding a constant
-    lm = sm.OLS(y, x).fit()  # fitting the model
-    intercept, slope = lm.params
-    pval = lm.pvalues[1]
-    #print(lm.summary())
+    lm = sm.OLS(y1, x1).fit()  # fitting the model
+    intercept, slope = lm.params[0], lm.params[1]
+    print(lm.summary())
+
+    x_values = np.linspace(np.min(x1[:, 1]), np.max(x1[:, 1]), 100)
+    y_values = intercept + slope * x_values
+    plt.figure()
+    plt.scatter(x1[:, 1], y1)  # Scatter plot of the data points
+    plt.plot(x_values, y_values, color="red", label="Linear Regression (binary variable)")
+    plt.xlabel("X")
+    plt.ylabel("Probability")
+    plt.legend()
+    plt.savefig("./figures/lymph_invest_lr" + colname + "_OC.png")
     """
 
     fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
