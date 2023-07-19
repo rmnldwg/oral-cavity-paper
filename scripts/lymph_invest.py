@@ -5,6 +5,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 from lyscripts.plot.histograms import get_size
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 from matplotlib.gridspec import GridSpec
@@ -333,7 +334,6 @@ for r in range(14):
     data = data_raw.loc[:, (header1, header2, header3)].dropna()
     colname = colnames[r]
 
-    """
     x = data.iloc[:, 0]
     y = data.iloc[:, 1]
     mask = x > 0
@@ -344,44 +344,70 @@ for r in range(14):
     x1 = sm.add_constant(x1, prepend=0.1, has_constant="add")
     y1 = [1 if num >= 1 else 0 for num in y]
     y1 = np.array(y1)[mask]
-    # model = sm.GLM(y1, x1, family=sm.families.Logit()).fit()
-    model = sm.Logit(y1, x1).fit()
-    print(model.summary())
-    print(model.pred_table())
-
-    def test(x, a):
-        return np.exp(a*x)
-
-    param, param_cov = curve_fit(test, xdata=x, ydata=y)
-    print(param)
-
-    intercept, slope = model.params[0], model.params[1]
-    x_values = np.linspace(np.min(x1[:, 1]), np.max(x1[:, 1]), 100)
-    y_values = 1 / (1 + np.exp(-intercept - slope * x_values))
-    plt.figure()
-    plt.scatter(x1[:, 1], y1)  # Scatter plot of the data points
-    plt.plot(x_values, y_values, color="red", label="Logistic Regression")
-    plt.xlabel("X")
-    plt.ylabel("Probability")
-    plt.legend()
-    plt.savefig("./figures/lymph_invest_logr" + colname + "_OC.png")
-
 
     # linear regression
     lm = sm.OLS(y1, x1).fit()  # fitting the model
     intercept, slope = lm.params[0], lm.params[1]
+    intercept_stderr, slope_stderr = lm.bse[0], lm.bse[1]
     print(lm.summary())
 
-    x_values = np.linspace(np.min(x1[:, 1]), np.max(x1[:, 1]), 100)
+    x_values = np.linspace(np.min(x1[:, 1]), np.max(x1[:, 1]), len(y1))
     y_values = intercept + slope * x_values
-    plt.figure()
-    plt.scatter(x1[:, 1], y1)  # Scatter plot of the data points
-    plt.plot(x_values, y_values, color="red", label="Linear Regression (binary variable)")
-    plt.xlabel("X")
-    plt.ylabel("Probability")
-    plt.legend()
+    # Confidence interval
+    predictions = lm.get_prediction(x1)
+    ci = predictions.conf_int()
+
+    # Calculate regression lines based on errors
+    t_value = 1.96  # Critical value for a 95% confidence interval (adjust as needed)
+    intercept_lower = intercept - t_value * intercept_stderr
+    intercept_upper = intercept + t_value * intercept_stderr
+    slope_lower = slope - t_value * slope_stderr
+    slope_upper = slope + t_value * slope_stderr
+    y_lower = intercept_lower + slope_lower * x_values
+    y_upper = intercept_upper + slope_upper * x_values
+
+    # Plotting
+    fig, ax = plt.subplots()
+    for i in range(len(y1)):
+        plt.scatter(
+            x1[i, 1], y1[i], s=sum(x1[:, 1] == x1[i, 1]), color="blue"
+        )  # Individual scatter plot for each data point
+    plt.plot(
+        x_values, y_values, color="red", label="Linear Regression (binary variable)"
+    )
+    plt.plot(x_values, ci[:, 0], color="orange", linestyle="--", label="Lower CI")
+    plt.plot(x_values, ci[:, 1], color="orange", linestyle="--", label="Upper CI")
+    plt.fill_between(x_values, ci[:, 0], ci[:, 1], color="orange", alpha=0.2)
+    plt.plot(
+        x_values,
+        y_lower,
+        color="green",
+        linestyle="-.",
+        label="Regression Line (Lower Bound)",
+    )
+    plt.plot(
+        x_values,
+        y_upper,
+        color="blue",
+        linestyle="-.",
+        label="Regression Line (Upper Bound)",
+    )
+    plt.xlabel("Number if lymph nodes investigated")
+    plt.ylabel("Probability of involvement")
+    plt.title(colname + " (n=" + str(len(data[data.iloc[:, 0] > 0])) + ")")
+    plt.legend(loc="upper left")
+
+    # Adding the formula
+    formula = f"y = {intercept:.2f} +/- {intercept_stderr:.2f} + ({slope:.4f} +/- {slope_stderr:.4f}) * x"
+    plt.text(
+        np.min(x1[:, 1]) + np.max(x1) / 20,
+        np.max(y1) - 0.2,
+        formula,
+        ha="left",
+        va="top",
+    )  # Adjust the y coordinate by subtracting 0.05
+
     plt.savefig("./figures/lymph_invest_lr" + colname + "_OC.png")
-    """
 
     fig = plt.figure(figsize=get_size(width="full", ratio=1.8), constrained_layout=True)
     spec = GridSpec(
