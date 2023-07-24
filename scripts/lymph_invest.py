@@ -515,29 +515,71 @@ for r in range(14):
 
     if levels[r] == "Ib_to_III":
         ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
-        ax2.hist(
+
+        # Define the histogram parameters
+        bins = 11
+        range_values = [-0.5, 10.5]
+
+        # Plot the histogram
+        counts, bins, patches = ax2.hist(
             data.iloc[:, 1],
             orientation="horizontal",
-            bins=11,
-            range=[-0.5, 10.5],
+            bins=bins,
+            range=range_values,
             color="#c5d5db",
         )
 
+        # Annotate each bin with its corresponding value
+        for count, bin, patch in zip(counts, bins, patches):
+            if count > 0:
+                height = patch.get_height()
+                ax2.text(
+                    28,  # Adjust the x-coordinate of the text position
+                    patch.get_y()
+                    + height / 2,  # Set the y-coordinate of the text position
+                    f"{int(count)}",  # Format the value as an integer
+                    ha="left",
+                    va="center",  # Horizontal and vertical alignment of the text
+                    fontsize="xx-small",  # Adjust the font size of the text
+                    color="black",  # Set the color of the text
+                )
+
     else:
         ax2 = fig.add_subplot(spec[0, 1], sharey=ax)
-        ax2.hist(
+
+        # Define the histogram parameters
+        bins = 8
+        range_values = [-0.5, 7.5]
+
+        # Plot the histogram
+        counts, bins, patches = ax2.hist(
             data.iloc[:, 1],
             orientation="horizontal",
-            bins=8,
-            range=[-0.5, 7.5],
+            bins=bins,
+            range=range_values,
             color="#c5d5db",
         )
+
+        # Annotate each bin with its corresponding value
+        for count, bin, patch in zip(counts, bins, patches):
+            if count > 0:
+                height = patch.get_height()
+                ax2.text(
+                    28,  # Adjust the x-coordinate of the text position
+                    patch.get_y()
+                    + height / 2,  # Set the y-coordinate of the text position
+                    f"{int(count)}",  # Format the value as an integer
+                    ha="left",
+                    va="center",  # Horizontal and vertical alignment of the text
+                    fontsize="xx-small",  # Adjust the font size of the text
+                    color="black",  # Set the color of the text
+                )
 
     plt.setp(ax2.get_yticklabels(), visible=False)
     plt.xlim(0, 300)
     plt.axhline(data.iloc[:, 1].mean(), color="k", linestyle="dashed", linewidth=0.5)
     ax2.text(
-        plt.xlim()[1] / 2,
+        plt.xlim()[1] / 2 + 5,
         data.iloc[:, 1].mean(),
         "mean",
         rotation="horizontal",
@@ -564,11 +606,63 @@ for r in range(14):
 
     if levels[r] == "Ib_to_III":
         ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
-        b = ax3.hist(data.iloc[:, 0], bins=71, range=[-0.5, 70.5], color="#c5d5db")
+
+        # Define the histogram parameters
+        bins = 71
+        range_values = [-0.5, 70.5]
+
+        # Plot the histogram and get the counts and bins
+        counts, bins, patches = ax3.hist(
+            data.iloc[:, 0],
+            bins=bins,
+            range=range_values,
+            color="#c5d5db",
+        )
+
+        # Annotate each bin with its corresponding value
+        for count, bin, patch in zip(counts, bins, patches):
+            if count > 0:
+                height = patch.get_height()
+                ax3.text(
+                    bin + 0.5,  # Adjust the x-coordinate of the text position
+                    6,  # Set the y-coordinate of the text position
+                    f"{int(count)}",  # Format the value as an integer
+                    ha="center",
+                    va="bottom",  # Horizontal and vertical alignment of the text
+                    fontsize="xx-small",  # Adjust the font size of the text
+                    color="black",  # Set the color of the text
+                    rotation=90,
+                )
 
     else:
         ax3 = fig.add_subplot(spec[1, 0], sharex=ax)
-        b = ax3.hist(data.iloc[:, 0], bins=43, range=[-0.5, 42.5], color="#c5d5db")
+
+        # Define the histogram parameters
+        bins = 43
+        range_values = [-0.5, 42.5]
+
+        # Plot the histogram and get the counts and bins
+        counts, bins, patches = ax3.hist(
+            data.iloc[:, 0],
+            bins=bins,
+            range=range_values,
+            color="#c5d5db",
+        )
+
+        # Annotate each bin with its corresponding value
+        for count, bin, patch in zip(counts, bins, patches):
+            if count > 0:
+                height = patch.get_height()
+                ax3.text(
+                    bin + 0.5,  # Adjust the x-coordinate of the text position
+                    6,  # Set the y-coordinate of the text position
+                    f"{int(count)}",  # Format the value as an integer
+                    ha="center",
+                    va="bottom",  # Horizontal and vertical alignment of the text
+                    fontsize="xx-small",  # Adjust the font size of the text
+                    color="black",  # Set the color of the text
+                    rotation=90,
+                )
 
     plt.setp(ax3.get_xticklabels(), visible=True)
     plt.ylim(0, 65)
@@ -708,9 +802,6 @@ image6 = imread("./figures/lymph_invest_hist_OC.png")
 image11 = imread("./figures/lymph_invest_hist2dnormIb ipsi_OC.png")
 image22 = imread("./figures/lymph_invest_hist2dnormII ipsi_OC.png")
 image33 = imread("./figures/lymph_invest_hist2dnormIII ipsi_OC.png")
-image44 = imread("./figures/lymph_invest_hist2dnormIV ipsi_OC.png")
-image55 = imread("./figures/lymph_invest_hist2dnormV ipsi_OC.png")
-image66 = imread("./figures/lymph_invest_hist_OC.png")
 
 
 # Create a new figure
@@ -751,29 +842,17 @@ fig = plt.figure(
 )
 
 # Add subplots and display images
-ax1 = fig.add_subplot(3, 2, 1)
+ax1 = fig.add_subplot(3, 1, 1)
 ax1.imshow(image11)
 ax1.axis("off")
 
-ax2 = fig.add_subplot(3, 2, 2)
+ax2 = fig.add_subplot(3, 1, 2)
 ax2.imshow(image22)
 ax2.axis("off")
 
-ax3 = fig.add_subplot(3, 2, 3)
+ax3 = fig.add_subplot(3, 1, 3)
 ax3.imshow(image33)
 ax3.axis("off")
-
-ax4 = fig.add_subplot(3, 2, 4)
-ax4.imshow(image44)
-ax4.axis("off")
-
-ax5 = fig.add_subplot(3, 2, 5)
-ax5.imshow(image55)
-ax5.axis("off")
-
-ax6 = fig.add_subplot(3, 2, 6)
-ax6.imshow(image66)
-ax6.axis("off")
 
 # Show the figure
 plt.savefig("./figures/lymph_invest_hist2dsnorm_combined_OC.png")
