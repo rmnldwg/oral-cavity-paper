@@ -8,7 +8,7 @@ from itertools import product
 from pathlib import Path
 
 import pandas as pd
-from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
+from shared import DATAFILE, TABLES_DIR, add_percent, load_and_prepare_data
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 LNLS = ["I", "II", "III", "IV", "V"]
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     key_product = list(product(t_stage.keys(), midline.keys(), ipsi.keys()))
     val_product = list(product(t_stage.values(), midline.values(), ipsi.values()))
 
-    columns = ["total", *LNLS]
+    columns = ["total", *add_percent(LNLS)]
     index = pd.MultiIndex.from_tuples(key_product, names=["t_stage", "midline", "ipsi"])
     data = pd.DataFrame(index=index, columns=columns)
 
@@ -45,6 +45,8 @@ if __name__ == "__main__":
         subset = max_llh_data.loc[t & m & i]
         data.loc[key_tuple, "total"] = len(subset)
         for lnl in LNLS:
-            data.loc[key_tuple, lnl] = subset["contra", lnl].sum()
+            num = subset["contra", lnl].sum()
+            data.loc[key_tuple, lnl] = num
+            data.loc[key_tuple, lnl + "%"] = int(num / len(subset) * 100)
 
     data.to_csv(TABLES_DIR / OUTPUT_NAME)

@@ -265,10 +265,10 @@ if __name__ == "__main__":
         POSITIONS - SPACE / 3.0,
         get_prevalence(
             max_llh_data["ipsi"],
-            subsites.isin(ORAL_CAVITY_ICD_CODES["gums and cheeks"]),
+            subsites.isin(ORAL_CAVITY_ICD_CODES["gums & cheeks"]),
             lnls=LABELS,
         ),
-        label=f"gums and cheek ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['gums and cheeks']))})",
+        label=f"gums & cheeks ({sum(subsites.isin(ORAL_CAVITY_ICD_CODES['gums & cheeks']))})",
         width=WIDTHS,
     )
 

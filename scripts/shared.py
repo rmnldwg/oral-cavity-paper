@@ -3,6 +3,7 @@
 Some shared params, functions, and classes.
 """
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 
@@ -54,6 +55,19 @@ ORAL_CAVITY_ICD_CODES = {
     # "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",],
     # "salivary glands": ["C08", "C08.0", "C08.1", "C08.9",],
 }
+
+
+def add_percent(columns: List[str]) -> List[str]:
+    """Add a column with percentages to the given columns."""
+    result_columns = []
+    for col in columns:
+        result_columns.append(col)
+        if isinstance(col, tuple):
+            *tmp, last = col
+            result_columns.append((*tmp, last + "%"))
+        else:
+            result_columns.append(col + "%")
+    return result_columns
 
 
 def tf2str(tf: bool) -> str:

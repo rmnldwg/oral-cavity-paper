@@ -35,6 +35,7 @@ stages:
       - venn_and_stacked_ece
     do:
       deps:
+        - scripts/shared.py
         - data/enhanced.csv
         - scripts/${item}.py
       cmd: >
@@ -68,6 +69,7 @@ stages:
       - involvement_combinations
     do:
       deps:
+        - scripts/shared.py
         - data/enhanced.csv
         - scripts/${item}.py
       cmd: >

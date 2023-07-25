@@ -11,10 +11,17 @@ patients in the respective group. For ECE only N+ patients are considered.
 from pathlib import Path
 
 import pandas as pd
-from shared import DATAFILE, TABLES_DIR, load_and_prepare_data, ORAL_CAVITY_ICD_CODES
+from shared import (
+    DATAFILE,
+    ORAL_CAVITY_ICD_CODES,
+    TABLES_DIR,
+    add_percent,
+    load_and_prepare_data,
+)
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 LNLS = ["I", "II", "III", "IV", "V"]
+
 
 
 if __name__ == "__main__":
@@ -34,7 +41,7 @@ if __name__ == "__main__":
         "floor of mouth": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["floor of mouth"]),
     }
 
-    columns = ["total", *LNLS]
+    columns = ["total", *add_percent(LNLS)]
     index = pd.MultiIndex.from_product(
         [["ipsi", "contra"], list(subset_condition.keys())]
     )
@@ -46,6 +53,9 @@ if __name__ == "__main__":
             table.loc[(side, row), "total"] = len(subset)
 
             for lnl in LNLS:
-                table.loc[(side, row), lnl] = int(subset[lnl].sum())
+                num = int(subset[lnl].sum())
+                percent = int(num / len(subset) * 100)
+                table.loc[(side, row), lnl] = num
+                table.loc[(side, row), lnl + "%"] = percent
 
     table.to_csv(TABLES_DIR / OUTPUT_NAME)

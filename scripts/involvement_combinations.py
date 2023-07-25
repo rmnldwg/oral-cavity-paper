@@ -13,7 +13,7 @@ from pathlib import Path
 import warnings
 
 import pandas as pd
-from shared import DATAFILE, TABLES_DIR, load_and_prepare_data, tf2str
+from shared import DATAFILE, TABLES_DIR, add_percent, load_and_prepare_data, tf2str
 
 warnings.simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         ("contra", "all"  ): [True] * len(dataset),
     }
 
-    columns = pd.MultiIndex.from_tuples(column_conditions.keys())
+    columns = pd.MultiIndex.from_tuples(add_percent(column_conditions.keys()))
     index = pd.MultiIndex.from_tuples(
         product(["pos", "neg"], repeat=3),
         names=["I", "II", "III"],
@@ -54,6 +54,9 @@ if __name__ == "__main__":
             )
         for row, row_condition in row_conditions.items():
             subset = max_llh_data[side].loc[col_condition & row_condition]
-            table.loc[row, (side, col)] = len(subset)
+            num = len(subset)
+            percent = int(num / len(dataset) * 100)
+            table.loc[row, (side, col)] = num
+            table.loc[row, (side, col + "%")] = percent
 
     table.to_csv(TABLES_DIR / OUTPUT_NAME)
