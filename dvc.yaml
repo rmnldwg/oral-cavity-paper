@@ -31,7 +31,7 @@ stages:
 
   figures:
     foreach:
-      - statistics
+      - multi_panel_statistics
       - venn_diagram
       - ece_stacked_bar
     do:

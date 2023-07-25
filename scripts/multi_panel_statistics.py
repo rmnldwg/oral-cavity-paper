@@ -201,7 +201,7 @@ if __name__ == "__main__":
     ax["contra midext"].bar(
         POSITIONS - SPACE / 3.0,
         get_prevalence(max_llh_data["contra"], has_not_midext, lnls=LABELS),
-        label=f"clearly lateralized ({sum(has_not_midext)})",
+        label=f"lateralized ({sum(has_not_midext)})",
         width=WIDTHS,
         zorder=1.2,
     )
@@ -275,7 +275,7 @@ if __name__ == "__main__":
     ax["subsites"].set_xticks(POSITIONS - SPACE / 3.0)
     ax["subsites"].set_xticklabels(LABELS)
     ax["subsites"].grid(axis="x")
-    ax["subsites"].set_ylabel("subsite involvement [%]")
+    ax["subsites"].set_ylabel("ipsilateral involvement [%]")
     ax["subsites"].legend()
 
     # fourth row, extracapsular involvement

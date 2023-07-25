@@ -79,8 +79,8 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: c32048af619fd31e848fb2848e147f5c.dir
-      size: 9760304
+      md5: 44e9dd46d2d1b0c33227204eb877789c.dir
+      size: 9759505
       nfiles: 51
     - path: tables
       hash: md5
@@ -281,3 +281,19 @@ stages:
       hash: md5
       md5: ba8540fe73ac4f9a77d620bca554734f
       size: 588
+  figures@multi_panel_statistics:
+    cmd: "python scripts/multi_panel_statistics.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: f3b752be16fb194b4566e16951f13bf1
+      size: 460298
+    - path: scripts/multi_panel_statistics.py
+      hash: md5
+      md5: 1f3d46480fa1ca399198302c3bfe42f2
+      size: 10910
+    outs:
+    - path: figures/multi_panel_statistics.png
+      hash: md5
+      md5: 0865cde932a8c73181e2ccbf87dd2fff
+      size: 221105
