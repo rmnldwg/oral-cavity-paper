@@ -65,7 +65,9 @@ stages:
   tables:
     foreach:
       - contra_involvement
-      - ece_data
+      - prevalence_overall
+      - prevalence_by_subsite
+      - involvement_combinations
     do:
       deps:
         - data/enhanced.csv

@@ -55,7 +55,7 @@ stages:
     outs:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
@@ -79,14 +79,14 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: 3ce90c3268b159540d48a93672d0cb52.dir
-      size: 10229486
-      nfiles: 80
+      md5: c32048af619fd31e848fb2848e147f5c.dir
+      size: 9760304
+      nfiles: 51
     - path: tables
       hash: md5
-      md5: 95b7270b3529e18520b117d6b8ec3a71.dir
-      size: 902
-      nfiles: 3
+      md5: 92bf3551ddeb28af1267b439ac0bc073.dir
+      size: 1728
+      nfiles: 5
   contra-involvement-table:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
     deps:
@@ -105,7 +105,7 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
     - path: scripts/contra_involvement.py
       hash: md5
@@ -121,7 +121,7 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
     - path: scripts/statistics.py
       hash: md5
@@ -130,14 +130,14 @@ stages:
     outs:
     - path: figures/statistics.png
       hash: md5
-      md5: ba7d8e3152a3ed5bcc02fead90c9e047
-      size: 219797
+      md5: 12b60eafb5964d874afa2ee61b8af3d0
+      size: 221932
   figures@venn_diagram:
     cmd: "python scripts/venn_diagram.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
     - path: scripts/venn_diagram.py
       hash: md5
@@ -146,14 +146,14 @@ stages:
     outs:
     - path: figures/venn_diagram.png
       hash: md5
-      md5: bc51c8feadba570c14609f7a28af8f88
-      size: 77344
+      md5: c6260bb1a69b06445f8759afa496e905
+      size: 77280
   tables@ece_data:
     cmd: "python scripts/ece_data.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
     - path: scripts/ece_data.py
       hash: md5
@@ -188,7 +188,7 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
     - path: scripts/ece_stacked_bar.py
       hash: md5
@@ -197,19 +197,19 @@ stages:
     outs:
     - path: figures/ece_stacked_bar.png
       hash: md5
-      md5: 22433cb1217d34d9201054a2adfd46ce
-      size: 58960
+      md5: 31db7c38e15bfd2b29984afca685acf5
+      size: 59511
   figures_lymph_invest@lymph_invest:
     cmd: "python scripts/lymph_invest.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 9f7b55f0d4af4e5e1314cb7258a36596
+      md5: f3b752be16fb194b4566e16951f13bf1
       size: 460298
     - path: scripts/lymph_invest.py
       hash: md5
-      md5: 380dc0b80db059f89fff689853bbfbba
-      size: 20861
+      md5: 81ff0d55d3620e837fbad8e7954da40b
+      size: 26585
   pvalues_lymph_invest@lymph_invest_pvalues:
     cmd: "python scripts/lymph_invest_pvalues.py\n"
     deps:
@@ -217,3 +217,51 @@ stages:
       hash: md5
       md5: c8928e42307025aedc9fe9f421955056
       size: 2702
+  tables@prevalence_overall:
+    cmd: "python scripts/prevalence_overall.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: f3b752be16fb194b4566e16951f13bf1
+      size: 460298
+    - path: scripts/prevalence_overall.py
+      hash: md5
+      md5: 7ea22e383aad72f66dea53235183966d
+      size: 1867
+    outs:
+    - path: tables/prevalence_overall.csv
+      hash: md5
+      md5: 52ccf1b4fed49c7195730f11688eb1d3
+      size: 392
+  tables@prevalence_by_subsite:
+    cmd: "python scripts/prevalence_by_subsite.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: f3b752be16fb194b4566e16951f13bf1
+      size: 460298
+    - path: scripts/prevalence_by_subsite.py
+      hash: md5
+      md5: ee39d3fe8989bb2a6c7aac2eafa1156d
+      size: 1692
+    outs:
+    - path: tables/prevalence_by_subsite.csv
+      hash: md5
+      md5: e5125f4bac4325d57f2e668a1403563b
+      size: 274
+  tables@involvement_combinations:
+    cmd: "python scripts/involvement_combinations.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: f3b752be16fb194b4566e16951f13bf1
+      size: 460298
+    - path: scripts/involvement_combinations.py
+      hash: md5
+      md5: a98cf55f25fd0dfc0b7184b1d2343a1a
+      size: 2514
+    outs:
+    - path: tables/involvement_combinations.csv
+      hash: md5
+      md5: e12c812a3649093ef1415004276a8cf9
+      size: 304
