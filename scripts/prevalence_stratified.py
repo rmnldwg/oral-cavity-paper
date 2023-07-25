@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Ipsilateral and contralateral involvement stratified according to primary tumor subsite.
+Prevalence of LNL involvement for the whole patient cohort (all) and stratified
+according to early (T1/T2) versus advanced (T3/T4) T-category and ECE in any level
+(ECE+) versus no ECE (ECE-). For each LNL, the first column indicates the number of
+patients showing involvement in the level, the second column the percentage of positive
+patients in the respective group. For ECE only N+ patients are considered.
 """
 # pylint: disable=import-error
 # pylint: disable=singleton-comparison
@@ -23,6 +27,12 @@ if __name__ == "__main__":
     is_nplus = max_llh_data.sum(axis=1) != 0
     subset_condition = {
         "all": [True] * len(dataset),
+        "T1/T2": dataset["tumor", "1", "t_stage"].isin([1, 2]),
+        "T3/T4": dataset["tumor", "1", "t_stage"].isin([3, 4]),
+        "N+": is_nplus,
+        "ECE+": (dataset["patient", "#", "extracapsular"] == True) & is_nplus,
+        "ECE?": (dataset["patient", "#", "extracapsular"].isna()) & is_nplus,
+        "ECE-": (dataset["patient", "#", "extracapsular"] == False) & is_nplus,
         "tongue": dataset["tumor", "1", "subsite"].isin(SUBSITES["tongue"]),
         "gums & cheek": dataset["tumor", "1", "subsite"].isin(SUBSITES["gums & cheek"]),
         "floor of mouth": dataset["tumor", "1", "subsite"].isin(SUBSITES["floor of mouth"]),

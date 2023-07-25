@@ -65,8 +65,7 @@ stages:
   tables:
     foreach:
       - contra_involvement
-      - prevalence_overall
-      - prevalence_by_subsite
+      - prevalence_stratified
       - involvement_combinations
     do:
       deps:

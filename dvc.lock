@@ -84,9 +84,9 @@ stages:
       nfiles: 51
     - path: tables
       hash: md5
-      md5: 92bf3551ddeb28af1267b439ac0bc073.dir
-      size: 1728
-      nfiles: 5
+      md5: b12679672c7b8200d014db0d11688cda.dir
+      size: 1677
+      nfiles: 4
   contra-involvement-table:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
     deps:
@@ -265,3 +265,19 @@ stages:
       hash: md5
       md5: e12c812a3649093ef1415004276a8cf9
       size: 304
+  tables@prevalence_stratified:
+    cmd: "python scripts/prevalence_stratified.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: f3b752be16fb194b4566e16951f13bf1
+      size: 460298
+    - path: scripts/prevalence_stratified.py
+      hash: md5
+      md5: 1bee4f61cb6325649598bc3c91ec6e3d
+      size: 2402
+    outs:
+    - path: tables/prevalence_stratified.csv
+      hash: md5
+      md5: ba8540fe73ac4f9a77d620bca554734f
+      size: 588
