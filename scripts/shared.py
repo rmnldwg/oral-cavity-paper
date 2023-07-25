@@ -32,7 +32,7 @@ ORAL_CAVITY_ICD_CODES = {
         "C02.8",
         "C02.9",
     ],
-    "gums and cheeks": [
+    "gums & cheeks": [
         "C03",
         "C03.0",
         "C03.1",
@@ -54,6 +54,11 @@ ORAL_CAVITY_ICD_CODES = {
     # "palate": ["C05", "C05.0", "C05.1", "C05.2", "C05.8", "C05.9",],
     # "salivary glands": ["C08", "C08.0", "C08.1", "C08.9",],
 }
+
+
+def tf2str(tf: bool) -> str:
+    """Transform `True` to `"pos"` and `False` to `"neg"`."""
+    return "pos" if tf else "neg"
 
 
 def load_and_prepare_data(filepath: Path | str, lnls: list[str]):

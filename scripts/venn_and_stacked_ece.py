@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Create stacked bar plot of how often patients who presented with a certain combination
-of involvements in the LNLs I, II, and III had extracapsular extension (ECE).
+Create a Venn diagram of co-involvements in LNLs I, II, and III in one panel, and a
+stacked bar plot of how often patients who presented with a certain combination
+of involvements in the LNLs I, II, and III had extracapsular extension (ECE) in a
+second panel.
 """
 # pylint: disable=import-error
 # pylint: disable=singleton-comparison
@@ -9,10 +11,13 @@ from itertools import product
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib_venn import venn3
+from cycler import cycler
 import numpy as np
 from lyscripts.plot.histograms import get_size
+import pandas as pd
 
-from shared import DATAFILE, COLORS, load_and_prepare_data
+from shared import DATAFILE, COLORS, load_and_prepare_data, tf2str
 
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
@@ -35,16 +40,43 @@ for i, width in enumerate(WIDTHS):
 LNLS = ["I", "II", "III"]
 
 
-def tf2str(tf: bool) -> str:
-    """Transform `True` to `"pos"` and `False` to `"neg"`."""
-    return "pos" if tf else "neg"
+def prepare_venn_data(ipsi: pd.DataFrame):
+    """Prepare data for Venn diagram."""
+    venn_data = {}
+    for lnl_I, lnl_II, lnl_III in product([True, False], repeat=3):
+        venn_data[(lnl_I, lnl_II, lnl_III)] = len(
+            ipsi.loc[
+                (ipsi["I"] == lnl_I)
+                & (ipsi["II"] == lnl_II)
+                & (ipsi["III"] == lnl_III)
+            ]
+        )
+
+    return venn_data
 
 
-if __name__ == "__main__":
-    dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LNLS)
-    extracapsular = dataset["patient", "#", "extracapsular"]
-    ipsi = max_llh_data["ipsi"]
+def plot_venn_diagram(ipsi, venn, venn_data):
+    """Plot Venn diagram."""
+    venn3(
+        subsets=(
+            venn_data[(True, False, False)],
+            venn_data[(False, True, False)],
+            venn_data[(True, True, False)],
+            venn_data[(False, False, True)],
+            venn_data[(True, False, True)],
+            venn_data[(False, True, True)],
+            venn_data[(True, True, True)],
+        ),
+        set_labels=("LNL I involved", "LNL II involved", "LNL III involved"),
+        set_colors=(COLORS["orange"], COLORS["red"], COLORS["blue"]),
+        alpha=0.6,
+        subset_label_formatter=lambda x: f"{x}\n({x/len(ipsi):.0%})",
+        ax=venn,
+    )
 
+
+def prepare_barplot_data(extracapsular, ipsi):
+    """Prepare data for stacked ECE barplot."""
     labels = []
     counts = {"ECE": [], "noECE": [], "total": []}
 
@@ -72,33 +104,19 @@ if __name__ == "__main__":
         )
         counts["total"].append(counts["ECE"][-1] + counts["noECE"][-1])
 
-    # Roman: I cannot reproduce these values. I get: 
-    #   'ECE':      [10, 11, 2, 14, 10, 21, 5]
-    #   'noECE':    [0 , 11, 2, 21, 5 , 30, 9]
+    return labels, counts
 
-    # ece = np.array([9, 11, 2, 14, 9, 21, 5])
-    # noece = np.array([2, 11, 2, 22, 5, 31, 9])
-    # ece_unk = np.array([0, 0, 0, 0, 0, 0, 0])
 
-    # ece_ipsi = np.array([9, 10, 2, 12, 8, 15, 5])
-    # noece_ipsi = np.array([2, 11, 2, 22, 5, 31, 9])
-    # ece_ipsi_unk = np.array([0, 1, 0, 2, 1, 6, 0])
-
-    # ece_contra = np.array([0, 0, 0, 0, 1, 0, 0])
-    # noece_contra = np.array([11, 21, 4, 34, 12, 46, 14])
-    # ece_contra_unk = np.array([0, 1, 0, 2, 1, 6, 0])
-
-    plt.style.use(MPLSTYLE)
-    fig, ax = plt.subplots(figsize=get_size())
-
-    ece_bars = ax.bar(
+def plot_stacked_bars(WIDTHS, POSITIONS, labels, counts, bars):
+    """Plot stacked ECE barplot."""
+    ece_bars = bars.bar(
         POSITIONS,
         counts["ECE"],
         label=f"ECE ({sum(counts['ECE'])})",
         color=COLORS["red"],
         width=WIDTHS,
     )
-    noece_bars = ax.bar(
+    noece_bars = bars.bar(
         POSITIONS,
         counts["noECE"],
         bottom=counts["ECE"],
@@ -115,7 +133,7 @@ if __name__ == "__main__":
         if percent == 0:
             continue
 
-        ax.annotate(
+        bars.annotate(
             text=f"{percent:.0f}%",
             xy=(x_loc, y_loc),
             ha="center",
@@ -133,7 +151,7 @@ if __name__ == "__main__":
         if percent == 0:
             continue
 
-        ax.annotate(
+        bars.annotate(
             text=f"{percent:.0f}%",
             xy=(x_loc, y_loc),
             ha="center",
@@ -143,11 +161,35 @@ if __name__ == "__main__":
             textcoords="offset points",
         )
 
-    ax.set_xticks(POSITIONS)
-    ax.set_xticklabels(labels, size=5)
-    ax.set_xlabel("ipsilateral involvement")
-    ax.set_ylabel("number of patients")
-    ax.legend()
-    ax.grid(axis="y")
+    bars.set_xticks(POSITIONS)
+    bars.set_xticklabels(labels, size=5)
+    bars.set_xlabel("ipsilateral involvement")
+    bars.set_ylabel("number of patients")
+    bars.legend()
+    bars.grid(axis="y")
+
+
+if __name__ == "__main__":
+    plt.style.use(MPLSTYLE)
+    plt.rc(
+        "axes",
+        prop_cycle=cycler(color=[COLORS["red"], COLORS["orange"], COLORS["green"]]),
+    )
+    plt.rcParams["figure.constrained_layout.use"] = True
+
+    dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LNLS)
+    extracapsular = dataset["patient", "#", "extracapsular"]
+    ipsi = max_llh_data["ipsi"]
+
+    fig, (venn, bars) = plt.subplots(
+        nrows=1, ncols=2,
+        figsize=get_size(width="full", ratio=2.),
+    )
+
+    venn_data = prepare_venn_data(ipsi)
+    plot_venn_diagram(ipsi, venn, venn_data)
+
+    labels, counts = prepare_barplot_data(extracapsular, ipsi)
+    plot_stacked_bars(WIDTHS, POSITIONS, labels, counts, bars)
 
     plt.savefig(OUTPUT_DIR / OUTPUT_NAME)

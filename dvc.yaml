@@ -32,8 +32,7 @@ stages:
   figures:
     foreach:
       - multi_panel_statistics
-      - venn_diagram
-      - ece_stacked_bar
+      - venn_and_stacked_ece
     do:
       deps:
         - data/enhanced.csv

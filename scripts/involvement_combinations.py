@@ -13,7 +13,7 @@ from pathlib import Path
 import warnings
 
 import pandas as pd
-from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
+from shared import DATAFILE, TABLES_DIR, load_and_prepare_data, tf2str
 
 warnings.simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
@@ -37,8 +37,6 @@ if __name__ == "__main__":
         ("contra", "all"  ): [True] * len(dataset),
     }
 
-    tf2pn = lambda tf: "pos" if tf else "neg"
-
     columns = pd.MultiIndex.from_tuples(column_conditions.keys())
     index = pd.MultiIndex.from_tuples(
         product(["pos", "neg"], repeat=3),
@@ -49,7 +47,7 @@ if __name__ == "__main__":
     for (side, col), col_condition in column_conditions.items():
         row_conditions = {}
         for lnl_I, lnl_II, lnl_III in product([True, False], repeat=3):
-            row_conditions[(tf2pn(lnl_I), tf2pn(lnl_II), tf2pn(lnl_III))] = (
+            row_conditions[(tf2str(lnl_I), tf2str(lnl_II), tf2str(lnl_III))] = (
                 (max_llh_data[side]["I"] == lnl_I)
                 & (max_llh_data[side]["II"] == lnl_II)
                 & (max_llh_data[side]["III"] == lnl_III)

@@ -11,15 +11,11 @@ patients in the respective group. For ECE only N+ patients are considered.
 from pathlib import Path
 
 import pandas as pd
-from shared import DATAFILE, TABLES_DIR, load_and_prepare_data
+from shared import DATAFILE, TABLES_DIR, load_and_prepare_data, ORAL_CAVITY_ICD_CODES
 
 OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 LNLS = ["I", "II", "III", "IV", "V"]
-SUBSITES = {
-    "tongue": ["C02", "C02.0", "C02.1", "C02.2", "C02.3", "C02.4", "C02.8", "C02.9"],
-    "gums & cheek": ["C03", "C03.0", "C03.1", "C03.9", "C06", "C06.0", "C06.1", "C06.2", "C06.8", "C06.9"],
-    "floor of mouth": ["C04", "C04.0", "C04.1", "C04.8", "C04.9"],
-}
+
 
 if __name__ == "__main__":
     dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LNLS)
@@ -33,9 +29,9 @@ if __name__ == "__main__":
         "ECE+": (dataset["patient", "#", "extracapsular"] == True) & is_nplus,
         "ECE?": (dataset["patient", "#", "extracapsular"].isna()) & is_nplus,
         "ECE-": (dataset["patient", "#", "extracapsular"] == False) & is_nplus,
-        "tongue": dataset["tumor", "1", "subsite"].isin(SUBSITES["tongue"]),
-        "gums & cheek": dataset["tumor", "1", "subsite"].isin(SUBSITES["gums & cheek"]),
-        "floor of mouth": dataset["tumor", "1", "subsite"].isin(SUBSITES["floor of mouth"]),
+        "tongue": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["tongue"]),
+        "gums & cheeks": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["gums & cheeks"]),
+        "floor of mouth": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["floor of mouth"]),
     }
 
     columns = ["total", *LNLS]
