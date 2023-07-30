@@ -59,8 +59,8 @@ if __name__ == "__main__":
             table.loc[(side, row), "total"] = len(subset)
 
             for lnl in LNLS:
-                num = int(subset[lnl].sum())
-                percent = int(num / len(subset) * 100)
+                num = round(subset[lnl].sum())
+                percent = round(num / len(subset) * 100)
                 table.loc[(side, row), lnl] = num
                 table.loc[(side, row), lnl + "%"] = percent
 

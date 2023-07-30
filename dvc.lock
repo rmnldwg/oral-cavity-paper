@@ -84,8 +84,8 @@ stages:
       nfiles: 50
     - path: tables
       hash: md5
-      md5: 69bbdda38593236338f5fa498ddd456f.dir
-      size: 2270
+      md5: d7a793a1036f5f6994a5a8410de7701d.dir
+      size: 2274
       nfiles: 4
   contra-involvement-table:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
@@ -109,8 +109,8 @@ stages:
       size: 460298
     - path: scripts/contra_involvement.py
       hash: md5
-      md5: 16fe569a645cf8f1b25437cc1fc34bd0
-      size: 1811
+      md5: 8a00df01936a456927b9da383bfafc67
+      size: 1813
     - path: scripts/shared.py
       hash: md5
       md5: bea72a34cea363f23774b1cbd50d962b
@@ -118,7 +118,7 @@ stages:
     outs:
     - path: tables/contra_involvement.csv
       hash: md5
-      md5: 7187a7f099ae34d812205a06439a5cb0
+      md5: 5a118ac1a64f950d5dd24aae094383f1
       size: 857
   figures@statistics:
     cmd: "python scripts/statistics.py\n"
@@ -212,8 +212,8 @@ stages:
       size: 460298
     - path: scripts/lymph_invest.py
       hash: md5
-      md5: 81ff0d55d3620e837fbad8e7954da40b
-      size: 26585
+      md5: eeef01bed4035a81c67bb3272f1a8da2
+      size: 26589
   pvalues_lymph_invest@lymph_invest_pvalues:
     cmd: "python scripts/lymph_invest_pvalues.py\n"
     deps:
@@ -262,8 +262,8 @@ stages:
       size: 460298
     - path: scripts/involvement_combinations.py
       hash: md5
-      md5: ed904c45445837df274d6c1fee260cd6
-      size: 2944
+      md5: d374fa99b2bd4bd3dc1fd94b2878ad76
+      size: 2946
     - path: scripts/shared.py
       hash: md5
       md5: bea72a34cea363f23774b1cbd50d962b
@@ -271,8 +271,8 @@ stages:
     outs:
     - path: tables/involvement_combinations.csv
       hash: md5
-      md5: 0190f098d691829637a76d4f952e493a
-      size: 494
+      md5: b2a539e93ec11bf537ac79e36ddcdfa8
+      size: 495
   tables@prevalence_stratified:
     cmd: "python scripts/prevalence_stratified.py\n"
     deps:
@@ -282,8 +282,8 @@ stages:
       size: 460298
     - path: scripts/prevalence_stratified.py
       hash: md5
-      md5: 4b823d939e4af891a4b8d7b5fd31cbc5
-      size: 2406
+      md5: 896cdd37cd7ac8ea71e2be9bd945039d
+      size: 2410
     - path: scripts/shared.py
       hash: md5
       md5: bea72a34cea363f23774b1cbd50d962b
@@ -291,8 +291,8 @@ stages:
     outs:
     - path: tables/prevalence_stratified.csv
       hash: md5
-      md5: 41d1e636124efb4e9d14f779de214e36
-      size: 773
+      md5: d639e2589f080e28c47a24a9b42f7dcd
+      size: 776
   figures@multi_panel_statistics:
     cmd: "python scripts/multi_panel_statistics.py\n"
     deps:

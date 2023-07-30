@@ -47,6 +47,6 @@ if __name__ == "__main__":
         for lnl in LNLS:
             num = subset["contra", lnl].sum()
             data.loc[key_tuple, lnl] = num
-            data.loc[key_tuple, lnl + "%"] = int(num / len(subset) * 100)
+            data.loc[key_tuple, lnl + "%"] = round(num / len(subset) * 100)
 
     data.to_csv(TABLES_DIR / OUTPUT_NAME)

@@ -64,7 +64,7 @@ if __name__ == "__main__":
             )
         for row, row_condition in row_conditions.items():
             subset = max_llh_data[side].loc[col_condition & row_condition]
-            percent = int(len(subset) / compare_against[col] * 100)
+            percent = round(len(subset) / compare_against[col] * 100)
             table.loc[row, (side, col)] = len(subset)
             table.loc[row, (side, col + "%")] = percent
 

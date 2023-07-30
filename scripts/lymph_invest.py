@@ -241,7 +241,7 @@ for r in range(14):
                 ax.text(
                     hist[1][i + 1] - 0.5,
                     hist[2][j + 1] - 0.5,
-                    int(bin_val),
+                    round(bin_val),
                     ha="center",
                     va="center",
                     color="white",
@@ -505,7 +505,7 @@ for r in range(14):
                 ax.text(
                     hist[1][i + 1] - 0.5,
                     hist[2][j + 1] - 0.5,
-                    int(round(bin_val[i][j], 0)),
+                    round(round(bin_val[i][j], 0)),
                     ha="center",
                     va="center",
                     color="white",
