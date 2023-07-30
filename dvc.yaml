@@ -53,15 +53,6 @@ stages:
       cmd: >
         python scripts/${item}.py
 
-  pvalues_lymph_invest:
-    foreach:
-      - lymph_invest_pvalues
-    do:
-      deps:
-        - scripts/${item}.py
-      cmd: >
-        python scripts/${item}.py
-
   tables:
     foreach:
       - contra_involvement

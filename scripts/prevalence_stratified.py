@@ -23,22 +23,28 @@ OUTPUT_NAME = Path(__file__).with_suffix(".csv").name
 LNLS = ["I", "II", "III", "IV", "V"]
 
 
-
 if __name__ == "__main__":
     dataset, max_llh_data = load_and_prepare_data(filepath=DATAFILE, lnls=LNLS)
 
     is_nplus = max_llh_data.sum(axis=1) != 0
+    has_ece = dataset["patient", "#", "extracapsular"] == True
     subset_condition = {
         "all": [True] * len(dataset),
         "T1/T2": dataset["tumor", "1", "t_stage"].isin([1, 2]),
         "T3/T4": dataset["tumor", "1", "t_stage"].isin([3, 4]),
+        "tongue": dataset["tumor", "1", "subsite"].isin(
+            ORAL_CAVITY_ICD_CODES["tongue"]
+        ),
+        "gums & cheeks": dataset["tumor", "1", "subsite"].isin(
+            ORAL_CAVITY_ICD_CODES["gums & cheeks"]
+        ),
+        "floor of mouth": dataset["tumor", "1", "subsite"].isin(
+            ORAL_CAVITY_ICD_CODES["floor of mouth"]
+        ),
         "N+": is_nplus,
-        "ECE+": (dataset["patient", "#", "extracapsular"] == True) & is_nplus,
-        "ECE?": (dataset["patient", "#", "extracapsular"].isna()) & is_nplus,
-        "ECE-": (dataset["patient", "#", "extracapsular"] == False) & is_nplus,
-        "tongue": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["tongue"]),
-        "gums & cheeks": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["gums & cheeks"]),
-        "floor of mouth": dataset["tumor", "1", "subsite"].isin(ORAL_CAVITY_ICD_CODES["floor of mouth"]),
+        "ECE+": has_ece & is_nplus,
+        # ECE- also contains one patient with ECE unknown
+        "ECE-": ~has_ece & is_nplus,
     }
 
     columns = ["total", *add_percent(LNLS)]

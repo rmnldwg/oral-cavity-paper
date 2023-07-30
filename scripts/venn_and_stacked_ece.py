@@ -11,14 +11,12 @@ from itertools import product
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from matplotlib_venn import venn3
-from cycler import cycler
 import numpy as np
-from lyscripts.plot.histograms import get_size
 import pandas as pd
-
-from shared import DATAFILE, COLORS, load_and_prepare_data, tf2str
-
+from cycler import cycler
+from lyscripts.plot.histograms import get_size
+from matplotlib_venn import venn3
+from shared import COLORS, DATAFILE, load_and_prepare_data, tf2str
 
 OUTPUT_NAME = Path(__file__).with_suffix(".png").name
 OUTPUT_DIR = Path("./figures")
@@ -46,9 +44,7 @@ def prepare_venn_data(ipsi: pd.DataFrame):
     for lnl_I, lnl_II, lnl_III in product([True, False], repeat=3):
         venn_data[(lnl_I, lnl_II, lnl_III)] = len(
             ipsi.loc[
-                (ipsi["I"] == lnl_I)
-                & (ipsi["II"] == lnl_II)
-                & (ipsi["III"] == lnl_III)
+                (ipsi["I"] == lnl_I) & (ipsi["II"] == lnl_II) & (ipsi["III"] == lnl_III)
             ]
         )
 
@@ -90,17 +86,18 @@ def prepare_barplot_data(extracapsular, ipsi):
         )
         counts["ECE"].append(
             extracapsular[
-                (ipsi["I"] == inv_I)
-                & (ipsi["II"] == inv_II)
-                & (ipsi["III"] == inv_III)
+                (ipsi["I"] == inv_I) & (ipsi["II"] == inv_II) & (ipsi["III"] == inv_III)
             ].sum()
         )
         counts["noECE"].append(
-            (extracapsular[
-                (ipsi["I"] == inv_I)
-                & (ipsi["II"] == inv_II)
-                & (ipsi["III"] == inv_III)
-            ] != True).sum()
+            (
+                extracapsular[
+                    (ipsi["I"] == inv_I)
+                    & (ipsi["II"] == inv_II)
+                    & (ipsi["III"] == inv_III)
+                ]
+                != True
+            ).sum()
         )
         counts["total"].append(counts["ECE"][-1] + counts["noECE"][-1])
 
@@ -182,8 +179,9 @@ if __name__ == "__main__":
     ipsi = max_llh_data["ipsi"]
 
     fig, (venn, bars) = plt.subplots(
-        nrows=1, ncols=2,
-        figsize=get_size(width="full", ratio=2.),
+        nrows=1,
+        ncols=2,
+        figsize=get_size(width="full", ratio=2.0),
     )
 
     venn_data = prepare_venn_data(ipsi)
