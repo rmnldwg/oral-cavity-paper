@@ -55,8 +55,8 @@ stages:
     outs:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
@@ -79,13 +79,13 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: eae541c6c6a9a6107fb3cc45c248da07.dir
-      size: 9759397
+      md5: 3d8c87f50b9a8658bef965d2fd4e08fd.dir
+      size: 9759785
       nfiles: 50
     - path: tables
       hash: md5
-      md5: d7a793a1036f5f6994a5a8410de7701d.dir
-      size: 2274
+      md5: 398ab9c0eca446bf9a34b453c3aad09d.dir
+      size: 2273
       nfiles: 4
   contra-involvement-table:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
@@ -105,8 +105,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
     - path: scripts/contra_involvement.py
       hash: md5
       md5: 8a00df01936a456927b9da383bfafc67
@@ -118,7 +118,7 @@ stages:
     outs:
     - path: tables/contra_involvement.csv
       hash: md5
-      md5: 5a118ac1a64f950d5dd24aae094383f1
+      md5: 4453145aba58dd9c5ac2fd257041fc1b
       size: 857
   figures@statistics:
     cmd: "python scripts/statistics.py\n"
@@ -208,8 +208,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
     - path: scripts/lymph_invest.py
       hash: md5
       md5: eeef01bed4035a81c67bb3272f1a8da2
@@ -258,8 +258,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
     - path: scripts/involvement_combinations.py
       hash: md5
       md5: d374fa99b2bd4bd3dc1fd94b2878ad76
@@ -271,15 +271,15 @@ stages:
     outs:
     - path: tables/involvement_combinations.csv
       hash: md5
-      md5: b2a539e93ec11bf537ac79e36ddcdfa8
-      size: 495
+      md5: 3f9395a90a7aaa7200bd87a07a8d4b6a
+      size: 494
   tables@prevalence_stratified:
     cmd: "python scripts/prevalence_stratified.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
     - path: scripts/prevalence_stratified.py
       hash: md5
       md5: 896cdd37cd7ac8ea71e2be9bd945039d
@@ -291,15 +291,15 @@ stages:
     outs:
     - path: tables/prevalence_stratified.csv
       hash: md5
-      md5: d639e2589f080e28c47a24a9b42f7dcd
+      md5: ee766e451ee0cbe4eea6b3e2c43bdee7
       size: 776
   figures@multi_panel_statistics:
     cmd: "python scripts/multi_panel_statistics.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
     - path: scripts/multi_panel_statistics.py
       hash: md5
       md5: 0164cc25c395206f658cea25141af1f8
@@ -311,15 +311,15 @@ stages:
     outs:
     - path: figures/multi_panel_statistics.png
       hash: md5
-      md5: bccc3b695db4ec9960787c6baa70bc69
-      size: 221311
+      md5: 6bc5f288d47bb1ccc2ee2276eabbc368
+      size: 221322
   figures@venn_and_stacked_ece:
     cmd: "python scripts/venn_and_stacked_ece.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: c4bc7c6045fee36899f738023b9bef43
-      size: 460298
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
     - path: scripts/shared.py
       hash: md5
       md5: bea72a34cea363f23774b1cbd50d962b
@@ -331,5 +331,5 @@ stages:
     outs:
     - path: figures/venn_and_stacked_ece.png
       hash: md5
-      md5: ffd9aba2e39868facf33e065fc577070
-      size: 136451
+      md5: f32b002029e8b2cc7032cf09e47009c3
+      size: 136828
