@@ -79,9 +79,9 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: 3d8c87f50b9a8658bef965d2fd4e08fd.dir
-      size: 9759785
-      nfiles: 50
+      md5: 775e6496899c21db422ada2874de4b77.dir
+      size: 644199
+      nfiles: 6
     - path: tables
       hash: md5
       md5: 398ab9c0eca446bf9a34b453c3aad09d.dir
@@ -333,3 +333,23 @@ stages:
       hash: md5
       md5: f32b002029e8b2cc7032cf09e47009c3
       size: 136828
+  figures@dissected_vs_positive:
+    cmd: "python scripts/dissected_vs_positive.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: c4a74afa0a1b2248763b911e48fa2133
+      size: 456854
+    - path: scripts/dissected_vs_positive.py
+      hash: md5
+      md5: d0567028119705c557b9656c6585c827
+      size: 3778
+    - path: scripts/shared.py
+      hash: md5
+      md5: bea72a34cea363f23774b1cbd50d962b
+      size: 2351
+    outs:
+    - path: figures/dissected_vs_positive.png
+      hash: md5
+      md5: ef3b26bbd9593634a9d9aaf202736aca
+      size: 139771

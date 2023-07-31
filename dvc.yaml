@@ -33,6 +33,7 @@ stages:
     foreach:
       - multi_panel_statistics
       - venn_and_stacked_ece
+      - dissected_vs_positive
     do:
       deps:
         - scripts/shared.py
@@ -42,16 +43,6 @@ stages:
         python scripts/${item}.py
       outs:
         - figures/${item}.png
-
-  figures_lymph_invest:
-    foreach:
-      - lymph_invest
-    do:
-      deps:
-        - data/enhanced.csv
-        - scripts/${item}.py
-      cmd: >
-        python scripts/${item}.py
 
   tables:
     foreach:
