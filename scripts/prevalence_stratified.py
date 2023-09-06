@@ -41,7 +41,7 @@ if __name__ == "__main__":
         "floor of mouth": dataset["tumor", "1", "subsite"].isin(
             ORAL_CAVITY_ICD_CODES["floor of mouth"]
         ),
-        "N+": is_nplus,
+        "pN+": is_nplus,
         "ECE+": has_ece & is_nplus,
         # ECE- also contains one patient with ECE unknown
         "ECE-": ~has_ece & is_nplus,

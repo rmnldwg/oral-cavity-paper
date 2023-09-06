@@ -31,7 +31,7 @@ if __name__ == "__main__":
     ipsi = {
         "none": max_llh_data["ipsi"].sum(axis=1) == 0,
         "one LNL": max_llh_data["ipsi"].sum(axis=1) == 1,
-        "two or more LNLs": max_llh_data["ipsi"].sum(axis=1) > 1,
+        "≥ two LNLs": max_llh_data["ipsi"].sum(axis=1) > 1,
     }
 
     key_product = list(product(t_stage.keys(), midline.keys(), ipsi.keys()))

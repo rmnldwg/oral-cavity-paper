@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     columns = pd.MultiIndex.from_tuples(add_percent(column_conditions.keys()))
     index = pd.MultiIndex.from_tuples(
-        product(["pos", "neg"], repeat=3),
+        product(["+", "-"], repeat=3),
         names=["I", "II", "III"],
     )
     table = pd.DataFrame(index=index, columns=columns)
