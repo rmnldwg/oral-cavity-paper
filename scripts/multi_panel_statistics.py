@@ -237,8 +237,10 @@ if __name__ == "__main__":
     ax["contra ipsi"].set_xticks(POSITIONS - SPACE / 3.0)
     ax["contra ipsi"].set_xticklabels(LABELS)
     ax["contra ipsi"].grid(axis="x")
+    ax["contra ipsi"].yaxis.set_label_position("right")
+    ax["contra ipsi"].yaxis.tick_right()
+    ax["contra ipsi"].set_ylabel("contralateral involvement [%]")
     ax["contra ipsi"].legend()
-    plt.setp(ax["contra ipsi"].get_yticklabels(), visible=False)
 
     # third row, involvement by subsite
     ax["subsites"].bar(
@@ -301,7 +303,7 @@ if __name__ == "__main__":
     ax["extracapsular"].grid(axis="x")
     ax["extracapsular"].yaxis.set_label_position("right")
     ax["extracapsular"].yaxis.tick_right()
-    ax["extracapsular"].set_ylabel("involvement [%]")
+    ax["extracapsular"].set_ylabel("ipsilateral involvement [%]")
     ax["extracapsular"].legend()
 
     # labelling the six subplots
