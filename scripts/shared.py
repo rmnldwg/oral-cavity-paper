@@ -71,8 +71,8 @@ def add_percent(columns: List[str]) -> List[str]:
 
 
 def tf2str(tf: bool) -> str:
-    """Transform `True` to `"pos"` and `False` to `"neg"`."""
-    return "pos" if tf else "neg"
+    """Transform `True` to `"+"` and `False` to `"-"`."""
+    return "+" if tf else "-"
 
 
 def load_and_prepare_data(filepath: Path | str, lnls: list[str]):

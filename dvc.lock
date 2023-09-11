@@ -79,13 +79,13 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: b947d3e5bd069864d72d7f1dfec70258.dir
-      size: 501178
-      nfiles: 5
+      md5: 3ef0558e09b33a75841c665acc79aee2.dir
+      size: 497030
+      nfiles: 4
     - path: tables
       hash: md5
-      md5: e2f6b4519070d1930942e866843bb644.dir
-      size: 2395
+      md5: 489efb07427b18671cb0295ba808a587.dir
+      size: 2203
       nfiles: 4
   contra-involvement-table:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
@@ -113,8 +113,8 @@ stages:
       size: 1809
     - path: scripts/shared.py
       hash: md5
-      md5: bea72a34cea363f23774b1cbd50d962b
-      size: 2351
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
     outs:
     - path: tables/contra_involvement.csv
       hash: md5
@@ -266,13 +266,13 @@ stages:
       size: 2942
     - path: scripts/shared.py
       hash: md5
-      md5: bea72a34cea363f23774b1cbd50d962b
-      size: 2351
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
     outs:
     - path: tables/involvement_combinations.csv
       hash: md5
-      md5: 7a11544f0e432e9a3d5885dc759fcdac
-      size: 638
+      md5: b8ca3ac3f19707ce6b1752da7d8f3263
+      size: 446
   tables@prevalence_stratified:
     cmd: "python scripts/prevalence_stratified.py\n"
     deps:
@@ -286,8 +286,8 @@ stages:
       size: 2411
     - path: scripts/shared.py
       hash: md5
-      md5: bea72a34cea363f23774b1cbd50d962b
-      size: 2351
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
     outs:
     - path: tables/prevalence_stratified.csv
       hash: md5
@@ -306,8 +306,8 @@ stages:
       size: 11015
     - path: scripts/shared.py
       hash: md5
-      md5: bea72a34cea363f23774b1cbd50d962b
-      size: 2351
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
     outs:
     - path: figures/multi_panel_statistics.png
       hash: md5
@@ -322,17 +322,17 @@ stages:
       size: 456854
     - path: scripts/shared.py
       hash: md5
-      md5: bea72a34cea363f23774b1cbd50d962b
-      size: 2351
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
     - path: scripts/venn_and_stacked_ece.py
       hash: md5
-      md5: a60f7f8065fac21197120fb122e50601
-      size: 5878
+      md5: 285456666b9d56d095cc64aa358ca959
+      size: 6471
     outs:
     - path: figures/venn_and_stacked_ece.png
       hash: md5
-      md5: f32b002029e8b2cc7032cf09e47009c3
-      size: 136828
+      md5: 63e150ac9f023cc775e31e7804a9d31d
+      size: 138828
   figures@dissected_vs_positive:
     cmd: "python scripts/dissected_vs_positive.py\n"
     deps:
@@ -346,8 +346,8 @@ stages:
       size: 3787
     - path: scripts/shared.py
       hash: md5
-      md5: bea72a34cea363f23774b1cbd50d962b
-      size: 2351
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
     outs:
     - path: figures/dissected_vs_positive.png
       hash: md5
