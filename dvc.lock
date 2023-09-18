@@ -79,9 +79,9 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: 3ef0558e09b33a75841c665acc79aee2.dir
-      size: 497030
-      nfiles: 4
+      md5: 54ca30a6fef9b57a7d0a56c7a28a4ec8.dir
+      size: 546578
+      nfiles: 5
     - path: tables
       hash: md5
       md5: 489efb07427b18671cb0295ba808a587.dir
@@ -353,3 +353,23 @@ stages:
       hash: md5
       md5: ef3b26bbd9593634a9d9aaf202736aca
       size: 139771
+  figures@contra_by_subsite:
+    cmd: "python scripts/contra_by_subsite.py\n"
+    deps:
+    - path: data/enhanced.csv
+      hash: md5
+      md5: 67a9e0cf5a72e1074536d850b43f5e38
+      size: 456854
+    - path: scripts/contra_by_subsite.py
+      hash: md5
+      md5: 17a720be7b79d6b42bd4dc0374be687f
+      size: 3108
+    - path: scripts/shared.py
+      hash: md5
+      md5: 35bf09255dfb9f9f1dd8f9027e73abc9
+      size: 2343
+    outs:
+    - path: figures/contra_by_subsite.png
+      hash: md5
+      md5: d9eb2aa20efe63c7d2028d7224fb52ed
+      size: 49525

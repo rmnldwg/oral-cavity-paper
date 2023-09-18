@@ -34,6 +34,7 @@ stages:
       - multi_panel_statistics
       - venn_and_stacked_ece
       - dissected_vs_positive
+      - contra_by_subsite
     do:
       deps:
         - scripts/shared.py
