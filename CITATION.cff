@@ -1,0 +1,32 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Pipeline for Oral Cavity Paper
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Roman
+    family-names: Ludwig
+    email: roman.ludwig@usz.ch
+    affiliation: University Hospital Zurich
+    orcid: 'https://orcid.org/0000-0001-9434-328X'
+  - given-names: Lars
+    family-names: Widmer
+    affiliation: University of Zurich
+repository-code: 'https://github.com/rmnldwg/oral-cavity-paper'
+abstract: >-
+  This software can be used to reproduce and/or update the
+  tables and figures of our publication titled "Patterns of
+  Lymph Node Involvement for Oral Cavity Squamous Cell
+  Carcinoma".
+keywords:
+  - cancer
+  - oral cavity
+  - lymphatic spread
+  - metastasis
+  - reproducible research
+license: MIT
+date-released: '2023-11-24'
