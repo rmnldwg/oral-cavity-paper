@@ -10,21 +10,21 @@ stages:
       size: 123938
     - path: data/2023-isb-multisite.csv
       hash: md5
-      md5: c3b5e57e4e7e139a630eab6505986b51
-      size: 190110
+      md5: 569984943168f3a56d6ca58d0813dee2
+      size: 204323
     outs:
     - path: data/joined.csv
       hash: md5
-      md5: 747c69ca353ae2967c3d9fa5d258e6ab
-      size: 359633
+      md5: d1c58d1bd8e9e9f39e322fac3d81553d
+      size: 385761
   enhance:
     cmd: "lyscripts data enhance data/joined.csv data/enhanced.csv --modalities CT
       MRI PET FNA diagnostic_consensus pathology pCT\n"
     deps:
     - path: data/joined.csv
       hash: md5
-      md5: 747c69ca353ae2967c3d9fa5d258e6ab
-      size: 359633
+      md5: d1c58d1bd8e9e9f39e322fac3d81553d
+      size: 385761
     params:
       params.yaml:
         modalities:
@@ -55,8 +55,8 @@ stages:
     outs:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
   statistics:
     cmd: ".venv/bin/python scripts/statistics.py\n"
     deps:
@@ -79,14 +79,14 @@ stages:
       size: 794
     - path: figures
       hash: md5
-      md5: 54ca30a6fef9b57a7d0a56c7a28a4ec8.dir
-      size: 546578
-      nfiles: 5
+      md5: 8a3d590bde843e678f1a82f3149c70ba.dir
+      size: 905301
+      nfiles: 8
     - path: tables
       hash: md5
-      md5: 489efb07427b18671cb0295ba808a587.dir
-      size: 2203
-      nfiles: 4
+      md5: a71483712242f3d06069c5d17c5ea83a.dir
+      size: 2428
+      nfiles: 5
   contra-involvement-table:
     cmd: ".venv/bin/python scripts/contra_involvement.py\n"
     deps:
@@ -105,8 +105,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/contra_involvement.py
       hash: md5
       md5: 2117e407183da5ed4adb6c6742654219
@@ -258,8 +258,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/involvement_combinations.py
       hash: md5
       md5: f82d3e7eb1abd4267c805b3f4493902e
@@ -278,8 +278,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/prevalence_stratified.py
       hash: md5
       md5: 0cdf789ce85e18b7c39fc223f5948aca
@@ -298,8 +298,8 @@ stages:
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/multi_panel_statistics.py
       hash: md5
       md5: 77c709cb30d01041215ac88446c967fe
@@ -311,15 +311,15 @@ stages:
     outs:
     - path: figures/multi_panel_statistics.png
       hash: md5
-      md5: e9c104834ffac22ce258dd14ae9abb09
+      md5: 24def62f204c4f1e86d09cbd5ea1acdb
       size: 218072
   figures@venn_and_stacked_ece:
     cmd: "python scripts/venn_and_stacked_ece.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/shared.py
       hash: md5
       md5: 35bf09255dfb9f9f1dd8f9027e73abc9
@@ -331,15 +331,15 @@ stages:
     outs:
     - path: figures/venn_and_stacked_ece.png
       hash: md5
-      md5: 63e150ac9f023cc775e31e7804a9d31d
+      md5: 9ecb6c6e55cb31ca335a9879f089590a
       size: 138828
   figures@dissected_vs_positive:
     cmd: "python scripts/dissected_vs_positive.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/dissected_vs_positive.py
       hash: md5
       md5: 1739860ac5847bf653023d53341e4045
@@ -351,15 +351,15 @@ stages:
     outs:
     - path: figures/dissected_vs_positive.png
       hash: md5
-      md5: ef3b26bbd9593634a9d9aaf202736aca
+      md5: 06db6be383131a0ffe273bf5396495bd
       size: 139771
   figures@contra_by_subsite:
     cmd: "python scripts/contra_by_subsite.py\n"
     deps:
     - path: data/enhanced.csv
       hash: md5
-      md5: 67a9e0cf5a72e1074536d850b43f5e38
-      size: 456854
+      md5: 810d9a11d0b6028cdd198aec16510770
+      size: 482794
     - path: scripts/contra_by_subsite.py
       hash: md5
       md5: 17a720be7b79d6b42bd4dc0374be687f
@@ -371,5 +371,5 @@ stages:
     outs:
     - path: figures/contra_by_subsite.png
       hash: md5
-      md5: d9eb2aa20efe63c7d2028d7224fb52ed
+      md5: 85cc98bd72cfa2fb86f2deba5819ea9c
       size: 49525
