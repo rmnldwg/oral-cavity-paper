@@ -5,6 +5,9 @@ This repository provides the source code to reproduce all figures and table in o
 > [!WARNING]
 > This paper is still under review and not yet published. Content and data here are still subject to change.
 
+> [!IMPORTANT]
+> All software in this repository is licensed under the MIT license. However, when executed, the pipeline described here will download data that is licensed under CC BY-SA 4.0.
+
 [JAMA Otolaryngology]: https://jamanetwork.com/journals/jamaotolaryngology
 
 
@@ -23,6 +26,9 @@ cd oral-cavity-paper
 
 ### Using `bash`
 
+> [!NOTE]
+> Requires bash on Linux
+
 If you're using `bash` on Linux and don't want to install Docker, you may get away with simply running the `repro.sh` script:
 ```
 bash setup.sh
@@ -40,6 +46,9 @@ But this script is probably quite platform dependent. So, if this does not work,
 
 
 ### Using Docker
+
+> [!NOTE]
+> Requires a [Docker installation].
 
 Although Docker is platform independent, it is sometimes a hassle to get it installed and running. Here is a guide to the [Docker installation].
 
@@ -60,4 +69,4 @@ docker run \
 
 That should run the pipeline from joining the datasets to plotting the figures and tables.
 
-[docker installation]: https://docs.docker.com/get-docker/
+[Docker installation]: https://docs.docker.com/get-docker/
