@@ -16,20 +16,23 @@ info "Determined latest Python:"
 LATEST_PY=$( find /usr/bin -name python3* -type f -executable | sort -V | tail -1 )
 eval "$LATEST_PY --version"
 
-info "Create virtual environment at:"
+info "Create and activate virtual environment:"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-eval "$LATEST_PY -m venv $SCRIPT_DIR/.venv"
-BIN=$SCRIPT_DIR/.venv/bin
-echo "$SCRIPT_DIR/.venv"
+TMP_DIR="$( mktemp --directory )"
+eval "$LATEST_PY -m venv $TMP_DIR"
+source $TMP_DIR/bin/activate
+echo "done"
 
 info "Upgrade pip and setuptools:"
-eval "$BIN/python -m pip install --upgrade pip setuptools"
+python -m pip install --upgrade pip setuptools
 
 info "Install requirements:"
-eval "$BIN/python -m pip install -r $SCRIPT_DIR/requirements.txt"
+python -m pip install -r $SCRIPT_DIR/requirements.txt
 
 info "Download/update data sources:"
-eval "$BIN/python -m dvc update -R $SCRIPT_DIR/data/"
+python -m dvc update -R $SCRIPT_DIR/data/
 
 info "Reproduce pipeline"
-eval "$BIN/python -m dvc repro $SCRIPT_DIR/dvc.yaml"
+python -m dvc repro -f $SCRIPT_DIR/dvc.yaml
+
+deactivate

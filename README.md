@@ -2,6 +2,9 @@
 
 This repository provides the source code to reproduce all figures and table in our publication with the above title that we submitted to [JAMA Otolaryngology] and update them in case the data changes. Below we provide instructions on how to achieve this.
 
+> [!WARNING]
+> This paper is still under review and not yet published. Content and data here are still subject to change.
+
 [JAMA Otolaryngology]: https://jamanetwork.com/journals/jamaotolaryngology
 
 
@@ -43,7 +46,7 @@ Although Docker is platform independent, it is sometimes a hassle to get it inst
 If Docker is up and running on your system, the following two commands should do the reproduction:
 
 ```
-docker build -t ocr-image .
+docker build -t ocp-image .
 ```
 
 and then run it with the following command:
