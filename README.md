@@ -1,6 +1,6 @@
 # Patterns of Lymph Node Involvement for Oral Cavity Squamous Cell Carcinoma
 
-This repository provides the source code to reproduce all figures and table in our publication with the above title that we submitted to [JAMA Otolaryngology] and update them in case the data changes. Below we provide instructions on how to achieve this.
+This repository provides the source code to reproduce all figures and table in our publication with the above title that we intend to submit to [The Green Journal] and update them in case the data changes. Below we provide instructions on how to achieve this.
 
 > [!WARNING]
 > This paper is still under review and not yet published. Content and data here are still subject to change.
@@ -8,7 +8,7 @@ This repository provides the source code to reproduce all figures and table in o
 > [!IMPORTANT]
 > All software in this repository is licensed under the MIT license. However, when executed, the pipeline described here will download data that is licensed under CC BY-SA 4.0.
 
-[JAMA Otolaryngology]: https://jamanetwork.com/journals/jamaotolaryngology
+[The Green Journal]: https://www.thegreenjournal.com/
 
 
 ## Reproduce the Pipeline
